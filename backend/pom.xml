@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+                             https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- ==========================================
+         SPRING BOOT PARENT
+         Provides default configurations and
+         dependency management for Spring Boot
+         ========================================== -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.2.5</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
+    <!-- ==========================================
+         PROJECT IDENTITY
+         ========================================== -->
+    <groupId>com.smartretail</groupId>
+    <artifactId>smart-retail-system</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
+
+    <name>Smart Retail Operations and Inventory Management System</name>
+    <description>
+        Enterprise-level Smart Retail Operations and Inventory Management System
+        built with Spring Boot 3, MongoDB, and React.js
+    </description>
+
+    <!-- ==========================================
+         JAVA VERSION
+         ========================================== -->
+    <properties>
+        <java.version>21</java.version>
+        <springdoc.version>2.3.0</springdoc.version>
+    </properties>
+
+    <!-- ==========================================
+         DEPENDENCIES
+         Each dependency is explained below
+         ========================================== -->
+    <dependencies>
+
+        <!-- 
+            SPRING BOOT STARTER WEB
+            Purpose: Builds RESTful web APIs
+            Includes: Spring MVC, Tomcat embedded server, Jackson (JSON)
+            Why needed: To create @RestController, @GetMapping, etc.
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!--
+            SPRING DATA MONGODB
+            Purpose: Connect Spring Boot to MongoDB
+            Includes: MongoTemplate, MongoRepository
+            Why needed: To perform CRUD operations on MongoDB collections
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-mongodb</artifactId>
+        </dependency>
+
+        <!--
+            SPRING BOOT STARTER VALIDATION
+            Purpose: Bean validation (JSR-380)
+            Includes: Hibernate Validator
+            Why needed: To validate incoming request data using @NotNull, @Email, etc.
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
+        <!--
+            SPRING SECURITY
+            Purpose: Security framework for authentication and authorization
+            Why needed: For JWT-based login and route protection (Phase 9)
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <!--
+            JJWT - JSON Web Token Library
+            Purpose: Create and validate JWT tokens
+            Why needed: For stateless authentication
+        -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+            <version>0.12.5</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>0.12.5</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <version>0.12.5</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!--
+            LOMBOK
+            Purpose: Reduces boilerplate code
+            Includes: @Getter, @Setter, @Builder, @AllArgsConstructor, @NoArgsConstructor
+            Why needed: Avoid writing repetitive getter/setter/constructor code
+        -->
+        <!-- Lombok removed: incompatible with Java 26 runtime. Using explicit getters/setters. -->
+
+        <!--
+            SPRINGDOC OPENAPI (SWAGGER)
+            Purpose: Auto-generates API documentation
+            Includes: Swagger UI at /swagger-ui.html
+            Why needed: To document and test REST APIs visually
+        -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>${springdoc.version}</version>
+        </dependency>
+
+        <!--
+            SPRING BOOT DEVTOOLS
+            Purpose: Hot reload during development
+            Why needed: Automatically restarts app on code changes
+            Scope: Only active during development (runtime scope)
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+
+        <!--
+            SPRING BOOT TEST
+            Purpose: Testing framework
+            Includes: JUnit 5, Mockito
+            Why needed: To write unit and integration tests
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!--
+            SPRING SECURITY TEST
+            Purpose: Testing security configurations
+            Why needed: To test authenticated endpoints
+        -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+    <!-- ==========================================
+         BUILD CONFIGURATION
+         ========================================== -->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

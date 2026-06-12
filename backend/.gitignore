@@ -1,0 +1,49 @@
+# ============================================================
+# .gitignore for Smart Retail System - Spring Boot Backend
+# ============================================================
+
+# ---- Maven Build Output ----
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# ---- IntelliJ IDEA ----
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+# ---- Eclipse ----
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+# ---- VS Code ----
+.vscode/
+
+# ---- OS Files ----
+.DS_Store
+Thumbs.db
+
+# ---- Logs ----
+*.log
+logs/
+
+# ---- Application Properties with Secrets ----
+# Never commit files containing passwords or API keys
+application-prod.properties
+application-secret.properties
+
+# ---- Node Modules (for frontend) ----
+node_modules/
+dist/
+build/
+.env
+.env.local
+.env.production
