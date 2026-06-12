@@ -75,4 +75,8 @@ public interface ProductRepository extends MongoRepository<Product, String> {
      * MongoDB query: db.products.countDocuments({ stockQuantity: { $lt: 10 } })
      */
     long countByStockQuantityLessThan(int threshold);
+
+    boolean existsByCategoryId(String categoryId);
+
+    boolean existsBySupplierId(String supplierId);
 }

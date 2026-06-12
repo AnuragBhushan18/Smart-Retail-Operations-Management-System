@@ -23,9 +23,12 @@ public class CategoryServiceImpl implements CategoryService {
     private static final Logger log = LoggerFactory.getLogger(CategoryServiceImpl.class);
 
     private final CategoryRepository categoryRepository;
+    private final com.smartretail.repository.ProductRepository productRepository;
 
-    public CategoryServiceImpl(CategoryRepository categoryRepository) {
+    public CategoryServiceImpl(CategoryRepository categoryRepository,
+                               com.smartretail.repository.ProductRepository productRepository) {
         this.categoryRepository = categoryRepository;
+        this.productRepository = productRepository;
     }
 
     @Override
@@ -88,6 +91,9 @@ public class CategoryServiceImpl implements CategoryService {
         log.info("Deleting category with id: {}", id);
         if (!categoryRepository.existsById(id)) {
             throw new ResourceNotFoundException("Category", "id", id);
+        }
+        if (productRepository.existsByCategoryId(id)) {
+            throw new IllegalArgumentException("Cannot delete category because there are active products associated with it");
         }
         categoryRepository.deleteById(id);
         log.info("Category deleted successfully: {}", id);

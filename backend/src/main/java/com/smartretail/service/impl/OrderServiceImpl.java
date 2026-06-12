@@ -164,7 +164,7 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Order", "id", id));
 
-        if (!"DELIVERED".equals(order.getStatus())) {
+        if (!"DELIVERED".equals(order.getStatus()) && !"CANCELLED".equals(order.getStatus())) {
             restoreStock(order);
         }
 

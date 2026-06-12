@@ -20,9 +20,12 @@ public class SupplierServiceImpl implements SupplierService {
     private static final Logger log = LoggerFactory.getLogger(SupplierServiceImpl.class);
 
     private final SupplierRepository supplierRepository;
+    private final com.smartretail.repository.ProductRepository productRepository;
 
-    public SupplierServiceImpl(SupplierRepository supplierRepository) {
+    public SupplierServiceImpl(SupplierRepository supplierRepository,
+                               com.smartretail.repository.ProductRepository productRepository) {
         this.supplierRepository = supplierRepository;
+        this.productRepository = productRepository;
     }
 
     @Override
@@ -84,6 +87,9 @@ public class SupplierServiceImpl implements SupplierService {
     public void deleteSupplier(String id) {
         if (!supplierRepository.existsById(id)) {
             throw new ResourceNotFoundException("Supplier", "id", id);
+        }
+        if (productRepository.existsBySupplierId(id)) {
+            throw new IllegalArgumentException("Cannot delete supplier because there are active products associated with it");
         }
         supplierRepository.deleteById(id);
         log.info("Supplier deleted: {}", id);
