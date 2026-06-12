@@ -34,7 +34,7 @@ import java.util.List;
  * ============================================================
  */
 @RestController
-@RequestMapping("/api/products")
+@RequestMapping("/products")
 @Tag(name = "Product Management", description = "APIs for managing products and inventory")
 @CrossOrigin(origins = "*")
 public class ProductController {

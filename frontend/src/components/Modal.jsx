@@ -1,18 +1,45 @@
 import { X } from 'lucide-react';
 
-export default function Modal({ isOpen, onClose, title, children, footer }) {
+export default function Modal({ isOpen, onClose, title, children, footer, size = 'md' }) {
   if (!isOpen) return null;
+
+  const sizeClass = {
+    sm: 'max-w-sm',
+    md: 'max-w-lg',
+    lg: 'max-w-2xl',
+    xl: 'max-w-3xl',
+  }[size] || 'max-w-lg';
+
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-box max-h-[90vh] flex flex-col" onClick={e => e.stopPropagation()}>
+      <div
+        className={`modal-box ${sizeClass} max-h-[92vh] flex flex-col w-full`}
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Header */}
         <div className="modal-header">
-          <h2 className="text-lg font-semibold text-white">{title}</h2>
-          <button onClick={onClose} className="text-slate-400 hover:text-white transition-colors">
-            <X size={20} />
+          <div>
+            <h2 className="text-base font-semibold text-slate-800">{title}</h2>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+          >
+            <X size={18} />
           </button>
         </div>
-        <div className="modal-body overflow-y-auto flex-1">{children}</div>
-        {footer && <div className="modal-footer">{footer}</div>}
+
+        {/* Body */}
+        <div className="modal-body overflow-y-auto flex-1">
+          {children}
+        </div>
+
+        {/* Footer */}
+        {footer && (
+          <div className="modal-footer">
+            {footer}
+          </div>
+        )}
       </div>
     </div>
   );

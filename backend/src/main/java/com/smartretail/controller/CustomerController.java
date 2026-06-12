@@ -28,7 +28,7 @@ import java.util.List;
  * ============================================================
  */
 @RestController
-@RequestMapping("/api/customers")
+@RequestMapping("/customers")
 @Tag(name = "Customer Management", description = "APIs for managing retail customers")
 @CrossOrigin(origins = "*")
 public class CustomerController {

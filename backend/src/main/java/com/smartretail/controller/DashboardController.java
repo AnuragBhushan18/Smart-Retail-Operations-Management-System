@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
  * ============================================================
  */
 @RestController
-@RequestMapping("/api/dashboard")
+@RequestMapping("/dashboard")
 @Tag(name = "Dashboard", description = "APIs for admin dashboard statistics and overview")
 @CrossOrigin(origins = "*")
 public class DashboardController {

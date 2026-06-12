@@ -1,65 +1,98 @@
 import { NavLink } from 'react-router-dom';
 import {
-  LayoutDashboard, Package, Tag, Truck, Users, ShoppingCart, Menu, X, Store
+  LayoutDashboard, Package, Tag, Truck, Users,
+  ShoppingCart, Store, ChevronLeft, ChevronRight,
+  BarChart3
 } from 'lucide-react';
 import { useState } from 'react';
 
 const navItems = [
-  { to: '/',           label: 'Dashboard',  icon: LayoutDashboard },
-  { to: '/products',   label: 'Products',   icon: Package },
-  { to: '/categories', label: 'Categories', icon: Tag },
-  { to: '/suppliers',  label: 'Suppliers',  icon: Truck },
-  { to: '/customers',  label: 'Customers',  icon: Users },
-  { to: '/orders',     label: 'Orders',     icon: ShoppingCart },
+  { to: '/',           label: 'Dashboard',  icon: LayoutDashboard, end: true  },
+  { to: '/products',   label: 'Products',   icon: Package          },
+  { to: '/categories', label: 'Categories', icon: Tag              },
+  { to: '/suppliers',  label: 'Suppliers',  icon: Truck            },
+  { to: '/customers',  label: 'Customers',  icon: Users            },
+  { to: '/orders',     label: 'Orders',     icon: ShoppingCart     },
 ];
 
 export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <aside className={`${collapsed ? 'w-16' : 'w-60'} flex-shrink-0 bg-slate-900 border-r border-slate-800 flex flex-col transition-all duration-300 min-h-screen`}>
-      {/* Logo */}
-      <div className="flex items-center gap-3 px-4 py-5 border-b border-slate-800">
-        <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0">
-          <Store size={16} className="text-white" />
+    <aside
+      className={`
+        ${collapsed ? 'w-[68px]' : 'w-[230px]'}
+        flex-shrink-0 flex flex-col min-h-screen
+        bg-brand-light border-r border-blue-100
+        transition-all duration-300 ease-in-out
+        relative
+      `}
+    >
+      {/* ── Brand ───────────────────────────────────────────────── */}
+      <div className={`flex items-center gap-3 px-4 py-5 border-b border-blue-100 ${collapsed ? 'justify-center' : ''}`}>
+        <div className="w-9 h-9 bg-blue-500 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm">
+          <Store size={18} className="text-white" />
         </div>
         {!collapsed && (
-          <div>
-            <p className="text-white font-bold text-sm leading-tight">SmartRetail</p>
-            <p className="text-indigo-400 text-xs">Admin Dashboard</p>
+          <div className="min-w-0">
+            <p className="text-slate-800 font-bold text-sm leading-tight truncate">SmartRetail</p>
+            <p className="text-blue-500 text-xs font-medium">Admin Portal</p>
           </div>
         )}
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          className="ml-auto text-slate-500 hover:text-white transition-colors"
-        >
-          {collapsed ? <Menu size={16} /> : <X size={16} />}
-        </button>
       </div>
 
-      {/* Nav */}
-      <nav className="flex-1 p-3 space-y-1">
-        {navItems.map(({ to, label, icon: Icon }) => (
+      {/* ── Navigation ──────────────────────────────────────────── */}
+      <nav className={`flex-1 py-4 ${collapsed ? 'px-2' : 'px-3'} space-y-1`}>
+        {!collapsed && (
+          <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-3 mb-2">
+            Main Menu
+          </p>
+        )}
+        {navItems.map(({ to, label, icon: Icon, end }) => (
           <NavLink
             key={to}
             to={to}
-            end={to === '/'}
+            end={end}
+            title={collapsed ? label : undefined}
             className={({ isActive }) =>
-              `nav-link ${isActive ? 'active' : ''}`
+              `nav-link ${isActive ? 'active' : ''} ${collapsed ? 'justify-center px-0' : ''}`
             }
           >
             <Icon size={18} className="flex-shrink-0" />
-            {!collapsed && <span>{label}</span>}
+            {!collapsed && <span className="truncate">{label}</span>}
           </NavLink>
         ))}
       </nav>
 
-      {/* Footer */}
+      {/* ── Footer ──────────────────────────────────────────────── */}
       {!collapsed && (
-        <div className="p-4 border-t border-slate-800">
-          <p className="text-xs text-slate-600 text-center">Smart Retail v1.0.0</p>
+        <div className="px-4 py-4 border-t border-blue-100">
+          <div className="flex items-center gap-3 p-3 bg-white rounded-xl border border-blue-100 shadow-sm">
+            <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
+              <BarChart3 size={14} className="text-blue-600" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-xs font-semibold text-slate-700 truncate">Smart Retail</p>
+              <p className="text-[10px] text-slate-400">v1.0.0 — Active</p>
+            </div>
+          </div>
         </div>
       )}
+
+      {/* ── Collapse Toggle ─────────────────────────────────────── */}
+      <button
+        onClick={() => setCollapsed(!collapsed)}
+        className="
+          absolute -right-3 top-[72px]
+          w-6 h-6 rounded-full bg-white border border-slate-200 shadow-sm
+          flex items-center justify-center
+          text-slate-400 hover:text-slate-700 hover:border-slate-300
+          transition-all duration-200 z-10
+        "
+        title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+      >
+        {collapsed ? <ChevronRight size={12} /> : <ChevronLeft size={12} />}
+      </button>
     </aside>
   );
 }

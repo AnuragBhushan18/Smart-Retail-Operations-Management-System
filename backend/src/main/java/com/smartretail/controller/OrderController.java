@@ -31,7 +31,7 @@ import java.util.Map;
  * ============================================================
  */
 @RestController
-@RequestMapping("/api/orders")
+@RequestMapping("/orders")
 @Tag(name = "Order Management", description = "APIs for managing the full order lifecycle")
 @CrossOrigin(origins = "*")
 public class OrderController {

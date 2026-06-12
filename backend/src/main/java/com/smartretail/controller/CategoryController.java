@@ -27,7 +27,7 @@ import java.util.List;
  * ============================================================
  */
 @RestController
-@RequestMapping("/api/categories")
+@RequestMapping("/categories")
 @Tag(name = "Category Management", description = "APIs for managing product categories")
 @CrossOrigin(origins = "*")
 public class CategoryController {

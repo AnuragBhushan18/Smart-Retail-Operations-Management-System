@@ -1,22 +1,22 @@
 import { useEffect, useState } from 'react';
 import { categoryAPI } from '../services/api';
 import Modal from '../components/Modal';
-import { PageLoader, ErrorAlert, ConfirmDialog, EmptyState } from '../components/ui';
-import { Plus, Pencil, Trash2, Tag, Search } from 'lucide-react';
+import { PageLoader, ErrorAlert, ConfirmDialog, EmptyState, FormError, SearchInput, SectionHeader } from '../components/ui';
+import { Plus, Pencil, Trash2, Tag } from 'lucide-react';
 
 const empty = { name: '', description: '' };
 
 export default function Categories() {
   const [categories, setCategories] = useState([]);
-  const [loading, setLoading]       = useState(true);
-  const [error, setError]           = useState(null);
-  const [search, setSearch]         = useState('');
-  const [modalOpen, setModalOpen]   = useState(false);
-  const [editing, setEditing]       = useState(null);
-  const [form, setForm]             = useState(empty);
-  const [saving, setSaving]         = useState(false);
-  const [deleteId, setDeleteId]     = useState(null);
-  const [formError, setFormError]   = useState('');
+  const [loading,    setLoading]    = useState(true);
+  const [error,      setError]      = useState(null);
+  const [search,     setSearch]     = useState('');
+  const [modalOpen,  setModalOpen]  = useState(false);
+  const [editing,    setEditing]    = useState(null);
+  const [form,       setForm]       = useState(empty);
+  const [saving,     setSaving]     = useState(false);
+  const [deleteId,   setDeleteId]   = useState(null);
+  const [formError,  setFormError]  = useState('');
 
   const load = async () => {
     try { setLoading(true); setError(null);
@@ -29,8 +29,8 @@ export default function Categories() {
   useEffect(() => { load(); }, []);
 
   const openCreate = () => { setEditing(null); setForm(empty); setFormError(''); setModalOpen(true); };
-  const openEdit   = (c)  => { setEditing(c); setForm({ name: c.name, description: c.description || '' }); setFormError(''); setModalOpen(true); };
-  const closeModal = ()   => { setModalOpen(false); setFormError(''); };
+  const openEdit   = (c) => { setEditing(c); setForm({ name: c.name, description: c.description || '' }); setFormError(''); setModalOpen(true); };
+  const closeModal = ()  => { setModalOpen(false); setFormError(''); };
 
   const handleSave = async () => {
     if (!form.name.trim()) { setFormError('Category name is required.'); return; }
@@ -58,48 +58,79 @@ export default function Categories() {
 
   return (
     <div className="space-y-5">
-      <div className="page-header">
-        <div>
-          <h1 className="page-title">Categories</h1>
-          <p className="page-subtitle">{categories.length} categories total</p>
-        </div>
-        <button className="btn-primary" onClick={openCreate}>
-          <Plus size={16} /> Add Category
-        </button>
+
+      <SectionHeader
+        title="Categories"
+        subtitle={`${categories.length} categories total`}
+        action={
+          <button className="btn-primary" onClick={openCreate}>
+            <Plus size={15} /> New Category
+          </button>
+        }
+      />
+
+      {/* ── Toolbar ───────────────────────────────────────────── */}
+      <div className="flex items-center justify-between">
+        <SearchInput
+          value={search}
+          onChange={setSearch}
+          placeholder="Search categories…"
+          className="w-64"
+        />
+        <p className="text-sm text-slate-500">
+          {filtered.length} of {categories.length} shown
+        </p>
       </div>
 
-      {/* Search */}
-      <div className="relative">
-        <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
-        <input className="input pl-9 max-w-xs" placeholder="Search categories…"
-          value={search} onChange={e => setSearch(e.target.value)} />
-      </div>
-
-      {/* Table */}
+      {/* ── Table ─────────────────────────────────────────────── */}
       <div className="card">
-        <div className="table-wrapper">
+        <div className="table-wrapper border-0 rounded-none rounded-2xl">
           <table className="table">
             <thead>
-              <tr><th>#</th><th>Name</th><th>Description</th><th>Created</th><th>Actions</th></tr>
+              <tr>
+                <th className="w-10">#</th>
+                <th>Category Name</th>
+                <th>Description</th>
+                <th>Created</th>
+                <th className="text-right pr-5">Actions</th>
+              </tr>
             </thead>
             <tbody>
               {filtered.length === 0 ? (
-                <tr><td colSpan={5}>
-                  <EmptyState icon={Tag} title="No categories found" />
-                </td></tr>
+                <tr>
+                  <td colSpan={5} className="py-0 border-0">
+                    <EmptyState
+                      icon={Tag}
+                      title="No categories found"
+                      description={search ? 'Try a different search term' : 'Create your first category to get started'}
+                      action={!search && <button className="btn-primary btn-sm mt-2" onClick={openCreate}><Plus size={13}/>Add Category</button>}
+                    />
+                  </td>
+                </tr>
               ) : filtered.map((c, i) => (
                 <tr key={c.id}>
-                  <td className="text-slate-500 w-10">{i + 1}</td>
-                  <td className="font-semibold text-white">{c.name}</td>
-                  <td className="text-slate-400 max-w-xs truncate">{c.description || '—'}</td>
-                  <td className="text-slate-500 text-xs">{c.createdAt ? new Date(c.createdAt).toLocaleDateString() : '—'}</td>
+                  <td className="text-slate-400 text-xs font-medium w-10">{i + 1}</td>
                   <td>
-                    <div className="flex gap-2">
-                      <button className="btn-success" onClick={() => openEdit(c)}>
-                        <Pencil size={13} /> Edit
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center flex-shrink-0">
+                        <Tag size={13} className="text-purple-500" />
+                      </div>
+                      <span className="font-semibold text-slate-800">{c.name}</span>
+                    </div>
+                  </td>
+                  <td className="text-slate-500 max-w-xs">
+                    <p className="truncate">{c.description || <span className="text-slate-300">—</span>}</p>
+                  </td>
+                  <td className="text-slate-400 text-xs">
+                    {c.createdAt ? new Date(c.createdAt).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) : '—'}
+                  </td>
+                  <td>
+                    <div className="flex gap-2 justify-end pr-1">
+                      <button className="btn-success btn-sm" onClick={() => openEdit(c)}>
+                        <Pencil size={12} /> Edit
                       </button>
-                      <button className="btn-danger" onClick={() => setDeleteId(c.id)}>
-                        <Trash2 size={13} /> Delete
+                      <button className="btn-danger btn-sm" onClick={() => setDeleteId(c.id)}>
+                        <Trash2 size={12} /> Delete
                       </button>
                     </div>
                   </td>
@@ -110,34 +141,52 @@ export default function Categories() {
         </div>
       </div>
 
-      {/* Create/Edit Modal */}
-      <Modal isOpen={modalOpen} onClose={closeModal}
+      {/* ── Create/Edit Modal ──────────────────────────────────── */}
+      <Modal
+        isOpen={modalOpen}
+        onClose={closeModal}
         title={editing ? 'Edit Category' : 'New Category'}
         footer={
           <>
             <button className="btn-secondary" onClick={closeModal}>Cancel</button>
             <button className="btn-primary" onClick={handleSave} disabled={saving}>
-              {saving ? 'Saving…' : (editing ? 'Update' : 'Create')}
+              {saving ? <><span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin"/>{editing ? 'Updating…' : 'Creating…'}</> : (editing ? 'Update Category' : 'Create Category')}
             </button>
           </>
         }
       >
-        {formError && <p className="text-red-400 text-sm bg-red-500/10 border border-red-500/30 rounded-lg px-3 py-2">{formError}</p>}
-        <div>
-          <label className="label">Category Name *</label>
-          <input className="input" placeholder="e.g. Electronics"
-            value={form.name} onChange={e => setForm({...form, name: e.target.value})} />
+        <FormError message={formError} />
+        <div className="form-group">
+          <label className="label">Category Name <span className="text-red-500">*</span></label>
+          <input
+            className="input"
+            placeholder="e.g. Electronics, Groceries…"
+            value={form.name}
+            onChange={e => setForm({ ...form, name: e.target.value })}
+            onKeyDown={e => e.key === 'Enter' && handleSave()}
+            autoFocus
+          />
         </div>
-        <div>
-          <label className="label">Description</label>
-          <textarea className="input h-24 resize-none" placeholder="Short description…"
-            value={form.description} onChange={e => setForm({...form, description: e.target.value})} />
+        <div className="form-group">
+          <label className="label">Description <span className="text-slate-400 font-normal">(optional)</span></label>
+          <textarea
+            className="input h-24 resize-none"
+            placeholder="Brief description of what this category contains…"
+            value={form.description}
+            onChange={e => setForm({ ...form, description: e.target.value })}
+          />
         </div>
       </Modal>
 
-      {/* Delete Confirm */}
-      <ConfirmDialog isOpen={!!deleteId} onCancel={() => setDeleteId(null)} onConfirm={handleDelete}
-        title="Delete Category" message="Are you sure? This cannot be undone." />
+      {/* ── Delete Confirm ─────────────────────────────────────── */}
+      <ConfirmDialog
+        isOpen={!!deleteId}
+        onCancel={() => setDeleteId(null)}
+        onConfirm={handleDelete}
+        title="Delete Category"
+        message="Are you sure you want to delete this category? This action cannot be undone."
+        confirmLabel="Delete Category"
+      />
     </div>
   );
 }

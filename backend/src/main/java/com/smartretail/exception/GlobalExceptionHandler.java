@@ -113,15 +113,19 @@ public class GlobalExceptionHandler {
     // -------------------------------------------------------
     // Catch-All: Handle Any Other Exception (500)
     // -------------------------------------------------------
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGlobalException(
             Exception ex, WebRequest request) {
+
+        log.error("Unhandled exception at {}: {}", extractPath(request), ex.getMessage(), ex);
 
         ErrorResponse error = new ErrorResponse(
                 LocalDateTime.now(),
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 "Internal Server Error",
-                "An unexpected error occurred. Please try again later.",
+                ex.getMessage() != null ? ex.getMessage() : "An unexpected error occurred.",
                 extractPath(request)
         );
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);

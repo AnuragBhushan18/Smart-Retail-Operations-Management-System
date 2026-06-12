@@ -27,7 +27,7 @@ import java.util.List;
  * ============================================================
  */
 @RestController
-@RequestMapping("/api/suppliers")
+@RequestMapping("/suppliers")
 @Tag(name = "Supplier Management", description = "APIs for managing product suppliers")
 @CrossOrigin(origins = "*")
 public class SupplierController {

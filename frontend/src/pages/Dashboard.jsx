@@ -1,44 +1,32 @@
 import { useEffect, useState } from 'react';
 import { dashboardAPI } from '../services/api';
-import { PageLoader, ErrorAlert } from '../components/ui';
+import { PageLoader, ErrorAlert, StatCard } from '../components/ui';
 import {
   Package, Tag, Truck, Users, ShoppingCart,
-  TrendingUp, AlertTriangle, DollarSign, CheckCircle,
-  Clock, Send, XCircle, RefreshCw
+  AlertTriangle, DollarSign, CheckCircle,
+  Clock, Send, TrendingUp, RefreshCw, Activity
 } from 'lucide-react';
 
-function StatCard({ icon: Icon, label, value, color, bg }) {
+function OrderStatusCard({ label, value, icon: Icon, bg, color, border }) {
   return (
-    <div className="stat-card">
-      <div className={`stat-icon ${bg}`}>
-        <Icon size={22} className={color} />
-      </div>
-      <div>
-        <p className="text-2xl font-bold text-white">{value ?? '—'}</p>
-        <p className="text-sm text-slate-400">{label}</p>
-      </div>
-    </div>
-  );
-}
-
-function OrderStatusCard({ label, value, icon: Icon, color, bg }) {
-  return (
-    <div className="card p-4 flex items-center justify-between">
-      <div>
-        <p className="text-slate-400 text-sm">{label}</p>
-        <p className="text-2xl font-bold text-white mt-1">{value}</p>
-      </div>
-      <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${bg}`}>
-        <Icon size={18} className={color} />
+    <div className={`card p-4 border-l-4 ${border}`}>
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-slate-500 text-xs font-medium uppercase tracking-wide">{label}</p>
+          <p className="text-2xl font-bold text-slate-800 mt-1 tabular-nums">{value}</p>
+        </div>
+        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${bg}`}>
+          <Icon size={18} className={color} />
+        </div>
       </div>
     </div>
   );
 }
 
 export default function Dashboard() {
-  const [stats, setStats]   = useState(null);
+  const [stats,   setStats]   = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError]   = useState(null);
+  const [error,   setError]   = useState(null);
 
   const load = async () => {
     try {
@@ -46,7 +34,7 @@ export default function Dashboard() {
       const res = await dashboardAPI.getStats();
       setStats(res.data);
     } catch {
-      setError('Failed to load dashboard statistics.');
+      setError('Failed to load dashboard statistics. Please make sure the backend is running.');
     } finally {
       setLoading(false);
     }
@@ -55,97 +43,140 @@ export default function Dashboard() {
   useEffect(() => { load(); }, []);
 
   if (loading) return <PageLoader />;
-  if (error)   return <ErrorAlert message={error} onRetry={load} />;
+  if (error)   return (
+    <div className="space-y-4">
+      <div>
+        <h1 className="page-title">Dashboard</h1>
+        <p className="page-subtitle">Overview of your retail operations</p>
+      </div>
+      <ErrorAlert message={error} onRetry={load} />
+    </div>
+  );
 
-  const fmt = (n) => n?.toLocaleString('en-IN') ?? 0;
+  const fmt      = (n) => (n ?? 0).toLocaleString('en-IN');
   const currency = (n) => '₹' + (n ?? 0).toLocaleString('en-IN', { maximumFractionDigits: 0 });
+  const now      = new Date().toLocaleDateString('en-IN', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
+
+      {/* ── Page Header ──────────────────────────────────────────────── */}
+      <div className="flex items-start justify-between">
         <div>
           <h1 className="page-title">Dashboard</h1>
-          <p className="page-subtitle">Welcome back — here's what's happening today</p>
+          <p className="page-subtitle">{now}</p>
         </div>
-        <button onClick={load} className="btn-secondary">
-          <RefreshCw size={15} /> Refresh
+        <button onClick={load} className="btn-secondary btn-sm">
+          <RefreshCw size={13} /> Refresh
         </button>
       </div>
 
-      {/* Main Stats */}
+      {/* ── KPI Stats Row ─────────────────────────────────────────────── */}
       <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-        <StatCard icon={Package}      label="Total Products"   value={fmt(stats.totalProducts)}   color="text-indigo-400"  bg="bg-indigo-500/10" />
-        <StatCard icon={Tag}          label="Categories"        value={fmt(stats.totalCategories)} color="text-purple-400"  bg="bg-purple-500/10" />
-        <StatCard icon={Truck}        label="Suppliers"          value={fmt(stats.totalSuppliers)}  color="text-cyan-400"    bg="bg-cyan-500/10"   />
-        <StatCard icon={Users}        label="Customers"          value={fmt(stats.totalCustomers)}  color="text-emerald-400" bg="bg-emerald-500/10"/>
-        <StatCard icon={ShoppingCart} label="Total Orders"       value={fmt(stats.totalOrders)}     color="text-amber-400"   bg="bg-amber-500/10"  />
+        <StatCard icon={Package}      label="Total Products"   value={fmt(stats.totalProducts)}   iconBg="bg-blue-50"    iconColor="text-blue-500" />
+        <StatCard icon={Tag}          label="Categories"        value={fmt(stats.totalCategories)} iconBg="bg-purple-50"  iconColor="text-purple-500" />
+        <StatCard icon={Truck}        label="Suppliers"          value={fmt(stats.totalSuppliers)}  iconBg="bg-teal-50"    iconColor="text-teal-500" />
+        <StatCard icon={Users}        label="Customers"          value={fmt(stats.totalCustomers)}  iconBg="bg-emerald-50" iconColor="text-emerald-500" />
+        <StatCard icon={ShoppingCart} label="Total Orders"       value={fmt(stats.totalOrders)}     iconBg="bg-amber-50"   iconColor="text-amber-500" />
       </div>
 
-      {/* Inventory Value + Low Stock Alert */}
+      {/* ── Inventory Value + Low Stock ───────────────────────────────── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="card p-5 flex items-center gap-4">
-          <div className="stat-icon bg-emerald-500/10">
-            <DollarSign size={22} className="text-emerald-400" />
+        {/* Inventory Value */}
+        <div className="card p-5">
+          <div className="flex items-center gap-4">
+            <div className="stat-icon bg-emerald-50">
+              <DollarSign size={22} className="text-emerald-600" />
+            </div>
+            <div>
+              <p className="text-slate-500 text-sm font-medium">Total Inventory Value</p>
+              <p className="text-3xl font-bold text-slate-800 mt-0.5 tabular-nums">
+                {currency(stats.totalInventoryValue)}
+              </p>
+            </div>
           </div>
-          <div>
-            <p className="text-slate-400 text-sm">Total Inventory Value</p>
-            <p className="text-3xl font-bold text-white mt-0.5">{currency(stats.totalInventoryValue)}</p>
+          <div className="mt-4 pt-4 border-t border-slate-100 flex items-center gap-2">
+            <Activity size={13} className="text-emerald-500" />
+            <span className="text-xs text-slate-500">{fmt(stats.totalProducts)} products tracked across {fmt(stats.totalCategories)} categories</span>
           </div>
         </div>
-        <div className={`card p-5 flex items-center gap-4 ${stats.lowStockCount > 0 ? 'border-amber-500/30' : ''}`}>
-          <div className={`stat-icon ${stats.lowStockCount > 0 ? 'bg-amber-500/10' : 'bg-slate-800'}`}>
-            <AlertTriangle size={22} className={stats.lowStockCount > 0 ? 'text-amber-400' : 'text-slate-500'} />
+
+        {/* Low Stock Alert */}
+        <div className={`card p-5 ${stats.lowStockCount > 0 ? 'border-amber-200 bg-amber-50/30' : ''}`}>
+          <div className="flex items-center gap-4">
+            <div className={`stat-icon ${stats.lowStockCount > 0 ? 'bg-amber-100' : 'bg-slate-100'}`}>
+              <AlertTriangle size={22} className={stats.lowStockCount > 0 ? 'text-amber-600' : 'text-slate-400'} />
+            </div>
+            <div>
+              <p className="text-slate-500 text-sm font-medium">Low Stock Alerts</p>
+              <p className={`text-3xl font-bold mt-0.5 tabular-nums ${stats.lowStockCount > 0 ? 'text-amber-600' : 'text-slate-800'}`}>
+                {stats.lowStockCount}
+                <span className="text-base font-normal text-slate-500 ml-1">
+                  product{stats.lowStockCount !== 1 ? 's' : ''}
+                </span>
+              </p>
+            </div>
           </div>
-          <div>
-            <p className="text-slate-400 text-sm">Low Stock Alerts</p>
-            <p className={`text-3xl font-bold mt-0.5 ${stats.lowStockCount > 0 ? 'text-amber-400' : 'text-white'}`}>
-              {stats.lowStockCount} product{stats.lowStockCount !== 1 ? 's' : ''}
-            </p>
+          <div className="mt-4 pt-4 border-t border-slate-100 flex items-center gap-2">
+            <AlertTriangle size={13} className={stats.lowStockCount > 0 ? 'text-amber-500' : 'text-slate-400'} />
+            <span className="text-xs text-slate-500">
+              {stats.lowStockCount > 0 ? `${stats.lowStockCount} items need restocking` : 'All products are sufficiently stocked'}
+            </span>
           </div>
         </div>
       </div>
 
-      {/* Order Status Breakdown */}
+      {/* ── Order Status Breakdown ────────────────────────────────────── */}
       <div>
-        <h2 className="text-base font-semibold text-slate-300 mb-3">Order Status Breakdown</h2>
+        <div className="flex items-center gap-2 mb-3">
+          <h2 className="text-base font-semibold text-slate-700">Order Status Overview</h2>
+          <span className="badge-info">{fmt(stats.totalOrders)} total</span>
+        </div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          <OrderStatusCard label="Pending"   value={stats.pendingOrders}   icon={Clock}        color="text-amber-400"   bg="bg-amber-500/10"  />
-          <OrderStatusCard label="Confirmed" value={stats.confirmedOrders} icon={TrendingUp}   color="text-blue-400"    bg="bg-blue-500/10"   />
-          <OrderStatusCard label="Shipped"   value={stats.shippedOrders}   icon={Send}         color="text-purple-400"  bg="bg-purple-500/10" />
-          <OrderStatusCard label="Delivered" value={stats.deliveredOrders} icon={CheckCircle}  color="text-emerald-400" bg="bg-emerald-500/10"/>
+          <OrderStatusCard label="Pending"   value={stats.pendingOrders}   icon={Clock}       bg="bg-amber-50"   color="text-amber-600"   border="border-amber-400" />
+          <OrderStatusCard label="Confirmed" value={stats.confirmedOrders} icon={TrendingUp}  bg="bg-blue-50"    color="text-blue-600"    border="border-blue-400" />
+          <OrderStatusCard label="Shipped"   value={stats.shippedOrders}   icon={Send}        bg="bg-purple-50"  color="text-purple-600"  border="border-purple-400" />
+          <OrderStatusCard label="Delivered" value={stats.deliveredOrders} icon={CheckCircle} bg="bg-emerald-50" color="text-emerald-600" border="border-emerald-400" />
         </div>
       </div>
 
-      {/* Low Stock Products Table */}
+      {/* ── Low Stock Products Table ──────────────────────────────────── */}
       {stats.lowStockProducts?.length > 0 && (
         <div className="card">
-          <div className="flex items-center gap-2 px-5 py-4 border-b border-slate-800">
-            <AlertTriangle size={16} className="text-amber-400" />
-            <h2 className="text-base font-semibold text-white">Low Stock Products</h2>
-            <span className="badge-warning ml-auto">{stats.lowStockProducts.length} items</span>
+          <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+            <div className="flex items-center gap-2">
+              <AlertTriangle size={16} className="text-amber-500" />
+              <h2 className="text-sm font-semibold text-slate-800">Products Needing Restock</h2>
+            </div>
+            <span className="badge-warning">{stats.lowStockProducts.length} items</span>
           </div>
-          <div className="table-wrapper">
+          <div className="table-wrapper border-0 rounded-none">
             <table className="table">
               <thead>
                 <tr>
-                  <th>Product</th><th>Brand</th><th>Category</th><th>Stock</th><th>Status</th>
+                  <th>Product</th>
+                  <th>Brand</th>
+                  <th>Category</th>
+                  <th>Stock Qty</th>
+                  <th>Status</th>
                 </tr>
               </thead>
               <tbody>
                 {stats.lowStockProducts.map(p => (
                   <tr key={p.id}>
-                    <td className="font-medium text-white">{p.name}</td>
-                    <td>{p.brand || '—'}</td>
-                    <td>{p.categoryName || '—'}</td>
+                    <td className="font-medium text-slate-800">{p.name}</td>
+                    <td className="text-slate-500">{p.brand || '—'}</td>
                     <td>
-                      <span className={`font-bold ${p.stockQuantity === 0 ? 'text-red-400' : 'text-amber-400'}`}>
+                      <span className="badge-info">{p.categoryName || '—'}</span>
+                    </td>
+                    <td>
+                      <span className={`font-bold text-base tabular-nums ${p.stockQuantity === 0 ? 'text-red-600' : 'text-amber-600'}`}>
                         {p.stockQuantity}
                       </span>
                     </td>
                     <td>
                       <span className={p.stockQuantity === 0 ? 'badge-danger' : 'badge-warning'}>
-                        {p.status}
+                        {p.stockQuantity === 0 ? 'Out of Stock' : 'Low Stock'}
                       </span>
                     </td>
                   </tr>
