@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { categoryAPI } from '../services/api';
 import Modal from '../components/Modal';
-import { PageLoader, ErrorAlert, ConfirmDialog, EmptyState, FormError, SearchInput, SectionHeader } from '../components/ui';
+import { ErrorAlert, ConfirmDialog, EmptyState, FormError, SearchInput, SectionHeader } from '../components/ui';
 import { Plus, Pencil, Trash2, Tag } from 'lucide-react';
+import { useToast } from '../context/ToastContext';
+import TableSkeleton from '../components/TableSkeleton';
 
 const empty = { name: '', description: '' };
 
@@ -17,13 +19,21 @@ export default function Categories() {
   const [saving,     setSaving]     = useState(false);
   const [deleteId,   setDeleteId]   = useState(null);
   const [formError,  setFormError]  = useState('');
+  
+  const { addToast } = useToast();
 
   const load = async () => {
-    try { setLoading(true); setError(null);
+    try {
+      setLoading(true);
+      setError(null);
       const res = await categoryAPI.getAll();
       setCategories(res.data);
-    } catch { setError('Failed to load categories.'); }
-    finally { setLoading(false); }
+    } catch {
+      setError('Failed to load categories.');
+      addToast('Failed to load categories list.', 'error');
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => { load(); }, []);
@@ -36,25 +46,37 @@ export default function Categories() {
     if (!form.name.trim()) { setFormError('Category name is required.'); return; }
     try {
       setSaving(true); setFormError('');
-      if (editing) await categoryAPI.update(editing.id, form);
-      else         await categoryAPI.create(form);
-      closeModal(); await load();
+      if (editing) {
+        await categoryAPI.update(editing.id, form);
+        addToast(`Category "${form.name}" updated successfully!`, 'success');
+      } else {
+        await categoryAPI.create(form);
+        addToast(`Category "${form.name}" created successfully!`, 'success');
+      }
+      closeModal();
+      await load();
     } catch (e) {
       setFormError(e.response?.data?.message || 'An error occurred. Please try again.');
+      addToast('Failed to save category.', 'error');
     } finally { setSaving(false); }
   };
 
   const handleDelete = async () => {
-    try { await categoryAPI.delete(deleteId); setDeleteId(null); await load(); }
-    catch { alert('Failed to delete category.'); }
+    try {
+      await categoryAPI.delete(deleteId);
+      setDeleteId(null);
+      addToast('Category deleted successfully!', 'success');
+      await load();
+    } catch {
+      addToast('Failed to delete category.', 'error');
+    }
   };
 
   const filtered = categories.filter(c =>
     c.name.toLowerCase().includes(search.toLowerCase())
   );
 
-  if (loading) return <PageLoader />;
-  if (error)   return <ErrorAlert message={error} onRetry={load} />;
+  if (error) return <ErrorAlert message={error} onRetry={load} />;
 
   return (
     <div className="space-y-5">
@@ -96,7 +118,9 @@ export default function Categories() {
               </tr>
             </thead>
             <tbody>
-              {filtered.length === 0 ? (
+              {loading ? (
+                <TableSkeleton cols={5} rows={5} />
+              ) : filtered.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="py-0 border-0">
                     <EmptyState
@@ -150,7 +174,7 @@ export default function Categories() {
           <>
             <button className="btn-secondary" onClick={closeModal}>Cancel</button>
             <button className="btn-primary" onClick={handleSave} disabled={saving}>
-              {saving ? <><span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin"/>{editing ? 'Updating…' : 'Creating…'}</> : (editing ? 'Update Category' : 'Create Category')}
+              {saving ? <><span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-1"/>{editing ? 'Updating…' : 'Creating…'}</> : (editing ? 'Update Category' : 'Create Category')}
             </button>
           </>
         }

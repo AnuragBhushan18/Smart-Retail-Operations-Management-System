@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { supplierAPI } from '../services/api';
 import Modal from '../components/Modal';
-import { PageLoader, ErrorAlert, ConfirmDialog, EmptyState, FormError, SearchInput, SectionHeader } from '../components/ui';
+import { ErrorAlert, ConfirmDialog, EmptyState, FormError, SearchInput, SectionHeader } from '../components/ui';
 import { Plus, Pencil, Trash2, Truck, Mail, Phone, MapPin } from 'lucide-react';
+import { useToast } from '../context/ToastContext';
+import TableSkeleton from '../components/TableSkeleton';
 
 const empty = { name: '', contactNumber: '', email: '', address: '' };
 
@@ -17,13 +19,21 @@ export default function Suppliers() {
   const [saving,     setSaving]     = useState(false);
   const [deleteId,   setDeleteId]   = useState(null);
   const [formError,  setFormError]  = useState('');
+  
+  const { addToast } = useToast();
 
   const load = async () => {
-    try { setLoading(true); setError(null);
+    try {
+      setLoading(true);
+      setError(null);
       const res = await supplierAPI.getAll();
       setSuppliers(res.data);
-    } catch { setError('Failed to load suppliers.'); }
-    finally { setLoading(false); }
+    } catch {
+      setError('Failed to load suppliers.');
+      addToast('Failed to load suppliers list.', 'error');
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => { load(); }, []);
@@ -37,17 +47,30 @@ export default function Suppliers() {
     if (!form.email.trim()) { setFormError('Email address is required.'); return; }
     try {
       setSaving(true); setFormError('');
-      if (editing) await supplierAPI.update(editing.id, form);
-      else         await supplierAPI.create(form);
-      closeModal(); await load();
+      if (editing) {
+        await supplierAPI.update(editing.id, form);
+        addToast(`Supplier "${form.name}" updated successfully!`, 'success');
+      } else {
+        await supplierAPI.create(form);
+        addToast(`Supplier "${form.name}" added successfully!`, 'success');
+      }
+      closeModal();
+      await load();
     } catch (e) {
       setFormError(e.response?.data?.message || 'An error occurred. Please try again.');
+      addToast('Failed to save supplier.', 'error');
     } finally { setSaving(false); }
   };
 
   const handleDelete = async () => {
-    try { await supplierAPI.delete(deleteId); setDeleteId(null); await load(); }
-    catch { alert('Failed to delete supplier.'); }
+    try {
+      await supplierAPI.delete(deleteId);
+      setDeleteId(null);
+      addToast('Supplier deleted successfully!', 'success');
+      await load();
+    } catch {
+      addToast('Failed to delete supplier.', 'error');
+    }
   };
 
   const filtered = suppliers.filter(s =>
@@ -61,8 +84,7 @@ export default function Suppliers() {
     return colors[name.charCodeAt(0) % colors.length];
   };
 
-  if (loading) return <PageLoader />;
-  if (error)   return <ErrorAlert message={error} onRetry={load} />;
+  if (error) return <ErrorAlert message={error} onRetry={load} />;
 
   return (
     <div className="space-y-5">
@@ -96,7 +118,9 @@ export default function Suppliers() {
               </tr>
             </thead>
             <tbody>
-              {filtered.length === 0 ? (
+              {loading ? (
+                <TableSkeleton cols={6} rows={5} />
+              ) : filtered.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="py-0 border-0">
                     <EmptyState icon={Truck} title="No suppliers found"

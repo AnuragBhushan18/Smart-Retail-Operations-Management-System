@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { productAPI, categoryAPI, supplierAPI } from '../services/api';
 import Modal from '../components/Modal';
-import { PageLoader, ErrorAlert, ConfirmDialog, EmptyState, FormError, SearchInput, SectionHeader } from '../components/ui';
-import { Plus, Pencil, Trash2, Package, AlertTriangle, RefreshCw, ChevronDown } from 'lucide-react';
+import { ErrorAlert, ConfirmDialog, EmptyState, FormError, SearchInput, SectionHeader } from '../components/ui';
+import { Plus, Pencil, Trash2, Package, AlertTriangle, RefreshCw } from 'lucide-react';
+import { useToast } from '../context/ToastContext';
+import TableSkeleton from '../components/TableSkeleton';
 
 const emptyForm = { name:'', description:'', price:'', stockQuantity:'', brand:'', categoryId:'', supplierId:'', status:'ACTIVE' };
 
@@ -30,13 +32,23 @@ export default function Products() {
   const [formError,    setFormError]    = useState('');
   const [stockQty,     setStockQty]     = useState('');
   const [stockReason,  setStockReason]  = useState('');
+  
+  const { addToast } = useToast();
 
   const load = async () => {
-    try { setLoading(true); setError(null);
+    try {
+      setLoading(true);
+      setError(null);
       const [p, c, s] = await Promise.all([productAPI.getAll(), categoryAPI.getAll(), supplierAPI.getAll()]);
-      setProducts(p.data); setCategories(c.data); setSuppliers(s.data);
-    } catch { setError('Failed to load products.'); }
-    finally { setLoading(false); }
+      setProducts(p.data);
+      setCategories(c.data);
+      setSuppliers(s.data);
+    } catch {
+      setError('Failed to load products.');
+      addToast('Failed to load products list.', 'error');
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => { load(); }, []);
@@ -57,24 +69,44 @@ export default function Products() {
     try {
       setSaving(true); setFormError('');
       const payload = { ...form, price: Number(form.price), stockQuantity: Number(form.stockQuantity) };
-      if (editing) await productAPI.update(editing.id, payload);
-      else         await productAPI.create(payload);
-      closeModal(); await load();
-    } catch (e) { setFormError(e.response?.data?.message || 'An error occurred.'); }
-    finally { setSaving(false); }
+      if (editing) {
+        await productAPI.update(editing.id, payload);
+        addToast(`Product "${form.name}" updated successfully!`, 'success');
+      } else {
+        await productAPI.create(payload);
+        addToast(`Product "${form.name}" added successfully!`, 'success');
+      }
+      closeModal();
+      await load();
+    } catch (e) {
+      setFormError(e.response?.data?.message || 'An error occurred.');
+      addToast('Failed to save product.', 'error');
+    } finally { setSaving(false); }
   };
 
   const handleDelete = async () => {
-    try { await productAPI.delete(deleteId); setDeleteId(null); await load(); }
-    catch { alert('Failed to delete product.'); }
+    try {
+      await productAPI.delete(deleteId);
+      setDeleteId(null);
+      addToast('Product deleted successfully!', 'success');
+      await load();
+    } catch {
+      addToast('Failed to delete product.', 'error');
+    }
   };
 
   const handleStockUpdate = async () => {
     if (stockQty === '') return;
     try {
       await productAPI.updateStock(stockModal.id, { stockQuantity: Number(stockQty), reason: stockReason });
-      setStockModal(null); setStockQty(''); setStockReason(''); await load();
-    } catch (e) { alert(e.response?.data?.message || 'Failed to update stock.'); }
+      addToast(`Stock for "${stockModal.name}" updated to ${stockQty} units!`, 'success');
+      setStockModal(null);
+      setStockQty('');
+      setStockReason('');
+      await load();
+    } catch (e) {
+      addToast(e.response?.data?.message || 'Failed to update stock.', 'error');
+    }
   };
 
   const filtered = products.filter(p => {
@@ -89,8 +121,7 @@ export default function Products() {
   const outOfStock  = products.filter(p => p.stockQuantity === 0).length;
   const lowStock    = products.filter(p => p.stockQuantity > 0 && p.stockQuantity < 10).length;
 
-  if (loading) return <PageLoader />;
-  if (error)   return <ErrorAlert message={error} onRetry={load} />;
+  if (error) return <ErrorAlert message={error} onRetry={load} />;
 
   return (
     <div className="space-y-5">
@@ -133,7 +164,9 @@ export default function Products() {
               </tr>
             </thead>
             <tbody>
-              {filtered.length === 0 ? (
+              {loading ? (
+                <TableSkeleton cols={6} rows={6} />
+              ) : filtered.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="py-0 border-0">
                     <EmptyState icon={Package} title="No products found"

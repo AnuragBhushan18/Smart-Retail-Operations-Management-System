@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { orderAPI, customerAPI, productAPI } from '../services/api';
 import Modal from '../components/Modal';
-import { PageLoader, ErrorAlert, ConfirmDialog, EmptyState, FormError, SearchInput, SectionHeader } from '../components/ui';
+import { ErrorAlert, ConfirmDialog, EmptyState, FormError, SearchInput, SectionHeader } from '../components/ui';
 import { Plus, Trash2, ShoppingCart, Package, X, Eye, TrendingUp, Clock, Send, CheckCircle, XCircle } from 'lucide-react';
+import { useToast } from '../context/ToastContext';
+import TableSkeleton from '../components/TableSkeleton';
 
 const STATUS_CONFIG = {
   PENDING:   { badge: 'badge-warning', icon: Clock,        label: 'Pending'   },
@@ -37,13 +39,23 @@ export default function Orders() {
   const [customerId,   setCustomerId]  = useState('');
   const [notes,        setNotes]       = useState('');
   const [items,        setItems]       = useState([{ productId: '', quantity: 1 }]);
+  
+  const { addToast } = useToast();
 
   const load = async () => {
-    try { setLoading(true); setError(null);
+    try {
+      setLoading(true);
+      setError(null);
       const [o, c, p] = await Promise.all([orderAPI.getAll(), customerAPI.getAll(), productAPI.getAll()]);
-      setOrders(o.data); setCustomers(c.data); setProducts(p.data);
-    } catch { setError('Failed to load orders.'); }
-    finally { setLoading(false); }
+      setOrders(o.data);
+      setCustomers(c.data);
+      setProducts(p.data);
+    } catch {
+      setError('Failed to load orders.');
+      addToast('Failed to load orders list.', 'error');
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => { load(); }, []);
@@ -61,19 +73,34 @@ export default function Orders() {
     try {
       setSaving(true); setFormError('');
       await orderAPI.create({ customerId, notes, items: items.map(it => ({ productId: it.productId, quantity: Number(it.quantity) })) });
-      setCreateOpen(false); await load();
-    } catch (e) { setFormError(e.response?.data?.message || 'Failed to create order.'); }
-    finally { setSaving(false); }
+      addToast('Order placed successfully!', 'success');
+      setCreateOpen(false);
+      await load();
+    } catch (e) {
+      setFormError(e.response?.data?.message || 'Failed to create order.');
+      addToast('Failed to place order.', 'error');
+    } finally { setSaving(false); }
   };
 
   const handleStatusChange = async (orderId, status) => {
-    try { await orderAPI.updateStatus(orderId, status); await load(); }
-    catch (e) { alert(e.response?.data?.message || 'Failed to update status.'); }
+    try {
+      await orderAPI.updateStatus(orderId, status);
+      addToast(`Order status updated to "${status}"!`, 'success');
+      await load();
+    } catch (e) {
+      addToast(e.response?.data?.message || 'Failed to update status.', 'error');
+    }
   };
 
   const handleDelete = async () => {
-    try { await orderAPI.delete(deleteId); setDeleteId(null); await load(); }
-    catch { alert('Failed to delete order.'); }
+    try {
+      await orderAPI.delete(deleteId);
+      setDeleteId(null);
+      addToast('Order deleted successfully!', 'success');
+      await load();
+    } catch {
+      addToast('Failed to delete order.', 'error');
+    }
   };
 
   const filtered = orders.filter(o => {
@@ -89,8 +116,7 @@ export default function Orders() {
   const shipped   = orders.filter(o => o.status === 'SHIPPED').length;
   const delivered = orders.filter(o => o.status === 'DELIVERED').length;
 
-  if (loading) return <PageLoader />;
-  if (error)   return <ErrorAlert message={error} onRetry={load} />;
+  if (error) return <ErrorAlert message={error} onRetry={load} />;
 
   return (
     <div className="space-y-5">
@@ -127,7 +153,9 @@ export default function Orders() {
               </tr>
             </thead>
             <tbody>
-              {filtered.length === 0 ? (
+              {loading ? (
+                <TableSkeleton cols={7} rows={5} />
+              ) : filtered.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="py-0 border-0">
                     <EmptyState icon={ShoppingCart} title="No orders found"

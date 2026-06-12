@@ -5,6 +5,33 @@ const api = axios.create({
   headers: { 'Content-Type': 'application/json' },
 });
 
+// Request interceptor: Inject Bearer token from localStorage
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+// Response interceptor: Global 401 handler
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      if (window.location.pathname !== '/login') {
+        window.location.href = '/login';
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
 // ── Categories ────────────────────────────────────────────────────────────────
 export const categoryAPI = {
   getAll:    ()         => api.get('/categories'),

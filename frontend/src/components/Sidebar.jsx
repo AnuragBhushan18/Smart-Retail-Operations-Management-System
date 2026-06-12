@@ -2,9 +2,10 @@ import { NavLink } from 'react-router-dom';
 import {
   LayoutDashboard, Package, Tag, Truck, Users,
   ShoppingCart, Store, ChevronLeft, ChevronRight,
-  BarChart3
+  BarChart3, LogOut
 } from 'lucide-react';
 import { useState } from 'react';
+import { useAuth } from '../context/AuthContext';
 
 const navItems = [
   { to: '/',           label: 'Dashboard',  icon: LayoutDashboard, end: true  },
@@ -17,6 +18,13 @@ const navItems = [
 
 export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
+  const { logout } = useAuth();
+
+  const handleLogout = () => {
+    if (window.confirm('Are you sure you want to sign out?')) {
+      logout();
+    }
+  };
 
   return (
     <aside
@@ -44,7 +52,7 @@ export default function Sidebar() {
       {/* ── Navigation ──────────────────────────────────────────── */}
       <nav className={`flex-1 py-4 ${collapsed ? 'px-2' : 'px-3'} space-y-1`}>
         {!collapsed && (
-          <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-3 mb-2">
+          <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-3 mb-2 animate-fade-in">
             Main Menu
           </p>
         )}
@@ -62,6 +70,20 @@ export default function Sidebar() {
             {!collapsed && <span className="truncate">{label}</span>}
           </NavLink>
         ))}
+
+        {/* ── Sign Out Button ── */}
+        <button
+          onClick={handleLogout}
+          title={collapsed ? 'Sign Out' : undefined}
+          className={`
+            w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold 
+            text-slate-500 hover:text-rose-600 hover:bg-rose-50/50 transition-all duration-200
+            ${collapsed ? 'justify-center px-0' : ''}
+          `}
+        >
+          <LogOut size={18} className="flex-shrink-0" />
+          {!collapsed && <span className="truncate">Sign Out</span>}
+        </button>
       </nav>
 
       {/* ── Footer ──────────────────────────────────────────────── */}

@@ -110,6 +110,32 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
+    @ExceptionHandler(org.springframework.security.authentication.BadCredentialsException.class)
+    public ResponseEntity<ErrorResponse> handleBadCredentialsException(
+            org.springframework.security.authentication.BadCredentialsException ex, WebRequest request) {
+        ErrorResponse error = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.UNAUTHORIZED.value(),
+                "Unauthorized",
+                "Invalid username or password",
+                extractPath(request)
+        );
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+    }
+
+    @ExceptionHandler(org.springframework.security.core.AuthenticationException.class)
+    public ResponseEntity<ErrorResponse> handleAuthenticationException(
+            org.springframework.security.core.AuthenticationException ex, WebRequest request) {
+        ErrorResponse error = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.UNAUTHORIZED.value(),
+                "Unauthorized",
+                ex.getMessage(),
+                extractPath(request)
+        );
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+    }
+
     // -------------------------------------------------------
     // Catch-All: Handle Any Other Exception (500)
     // -------------------------------------------------------

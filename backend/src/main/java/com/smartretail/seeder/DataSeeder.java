@@ -5,6 +5,7 @@ import com.smartretail.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -28,21 +29,44 @@ public class DataSeeder implements CommandLineRunner {
     private final ProductRepository  productRepository;
     private final CustomerRepository customerRepository;
     private final OrderRepository    orderRepository;
+    private final AdminRepository    adminRepository;
+    private final PasswordEncoder    passwordEncoder;
 
     public DataSeeder(CategoryRepository categoryRepository,
                       SupplierRepository supplierRepository,
                       ProductRepository productRepository,
                       CustomerRepository customerRepository,
-                      OrderRepository orderRepository) {
+                      OrderRepository orderRepository,
+                      AdminRepository adminRepository,
+                      PasswordEncoder passwordEncoder) {
         this.categoryRepository = categoryRepository;
         this.supplierRepository = supplierRepository;
         this.productRepository  = productRepository;
         this.customerRepository = customerRepository;
         this.orderRepository    = orderRepository;
+        this.adminRepository    = adminRepository;
+        this.passwordEncoder    = passwordEncoder;
     }
 
     @Override
     public void run(String... args) {
+        // Seed Admin user first if none exists
+        if (adminRepository.count() == 0) {
+            log.info("No admin accounts found. Seeding default admin user...");
+            Admin admin = Admin.builder()
+                    .name("Administrator")
+                    .username("admin")
+                    .email("admin@smartretail.com")
+                    .password(passwordEncoder.encode("admin123"))
+                    .role("ADMIN")
+                    .active(true)
+                    .createdAt(LocalDateTime.now())
+                    .updatedAt(LocalDateTime.now())
+                    .build();
+            adminRepository.save(admin);
+            log.info("Default admin user seeded successfully!");
+        }
+
         if (categoryRepository.count() > 0) {
             log.info("Database already seeded. Skipping data seeder.");
             return;

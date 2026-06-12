@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { customerAPI } from '../services/api';
 import Modal from '../components/Modal';
-import { PageLoader, ErrorAlert, ConfirmDialog, EmptyState, FormError, SearchInput, SectionHeader } from '../components/ui';
+import { ErrorAlert, ConfirmDialog, EmptyState, FormError, SearchInput, SectionHeader } from '../components/ui';
 import { Plus, Pencil, Trash2, Users, Mail, Phone, MapPin } from 'lucide-react';
+import { useToast } from '../context/ToastContext';
+import TableSkeleton from '../components/TableSkeleton';
 
 const emptyAddr = { street: '', city: '', state: '', pincode: '', country: 'India' };
 const emptyForm = { name: '', phone: '', email: '', address: emptyAddr };
@@ -18,13 +20,21 @@ export default function Customers() {
   const [saving,     setSaving]     = useState(false);
   const [deleteId,   setDeleteId]   = useState(null);
   const [formError,  setFormError]  = useState('');
+  
+  const { addToast } = useToast();
 
   const load = async () => {
-    try { setLoading(true); setError(null);
+    try {
+      setLoading(true);
+      setError(null);
       const res = await customerAPI.getAll();
       setCustomers(res.data);
-    } catch { setError('Failed to load customers.'); }
-    finally { setLoading(false); }
+    } catch {
+      setError('Failed to load customers.');
+      addToast('Failed to load customers list.', 'error');
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => { load(); }, []);
@@ -47,16 +57,30 @@ export default function Customers() {
     if (!form.email.trim()) { setFormError('Email address is required.'); return; }
     try {
       setSaving(true); setFormError('');
-      if (editing) await customerAPI.update(editing.id, form);
-      else         await customerAPI.create(form);
-      closeModal(); await load();
-    } catch (e) { setFormError(e.response?.data?.message || 'An error occurred.'); }
-    finally { setSaving(false); }
+      if (editing) {
+        await customerAPI.update(editing.id, form);
+        addToast(`Customer "${form.name}" updated successfully!`, 'success');
+      } else {
+        await customerAPI.create(form);
+        addToast(`Customer "${form.name}" added successfully!`, 'success');
+      }
+      closeModal();
+      await load();
+    } catch (e) {
+      setFormError(e.response?.data?.message || 'An error occurred.');
+      addToast('Failed to save customer details.', 'error');
+    } finally { setSaving(false); }
   };
 
   const handleDelete = async () => {
-    try { await customerAPI.delete(deleteId); setDeleteId(null); await load(); }
-    catch { alert('Failed to delete customer.'); }
+    try {
+      await customerAPI.delete(deleteId);
+      setDeleteId(null);
+      addToast('Customer record deleted successfully!', 'success');
+      await load();
+    } catch {
+      addToast('Failed to delete customer record.', 'error');
+    }
   };
 
   const filtered = search
@@ -70,15 +94,14 @@ export default function Customers() {
     return colors[name.charCodeAt(0) % colors.length];
   };
 
-  if (loading) return <PageLoader />;
-  if (error)   return <ErrorAlert message={error} onRetry={load} />;
+  if (error) return <ErrorAlert message={error} onRetry={load} />;
 
   return (
     <div className="space-y-5">
 
       <SectionHeader
         title="Customers"
-        subtitle={`${customers.length} customers registered`}
+        subtitle={`${customers.length} customers total`}
         action={<button className="btn-primary" onClick={openCreate}><Plus size={15}/> Add Customer</button>}
       />
 
@@ -101,7 +124,9 @@ export default function Customers() {
               </tr>
             </thead>
             <tbody>
-              {filtered.length === 0 ? (
+              {loading ? (
+                <TableSkeleton cols={6} rows={5} />
+              ) : filtered.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="py-0 border-0">
                     <EmptyState icon={Users} title="No customers found"

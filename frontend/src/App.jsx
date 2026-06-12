@@ -6,6 +6,10 @@ import Categories from './pages/Categories';
 import Suppliers  from './pages/Suppliers';
 import Customers  from './pages/Customers';
 import Orders     from './pages/Orders';
+import Login      from './pages/Login';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import { ToastProvider } from './context/ToastContext';
+import ProtectedRoute from './components/ProtectedRoute';
 import { Bell, Settings } from 'lucide-react';
 
 const PAGE_TITLES = {
@@ -19,8 +23,19 @@ const PAGE_TITLES = {
 
 function TopBar() {
   const location = useLocation();
-  const info = PAGE_TITLES[location.pathname] || {};
+  const { user } = useAuth();
+  const info = PAGE_TITLES[location.pathname] || { title: 'Dashboard' };
   const now  = new Date().toLocaleDateString('en-IN', { weekday: 'short', month: 'short', day: 'numeric' });
+
+  // Compute initials dynamically based on logged in user's name
+  const getInitials = () => {
+    if (!user || !user.name) return 'AD';
+    const parts = user.name.split(' ');
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return user.name.substring(0, 2).toUpperCase();
+  };
 
   return (
     <header className="flex-shrink-0 h-14 bg-white border-b border-slate-200 flex items-center justify-between px-6">
@@ -40,8 +55,11 @@ function TopBar() {
         <button className="p-2 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors" title="Settings">
           <Settings size={17} />
         </button>
-        <div className="w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center text-white text-xs font-bold ml-1">
-          AD
+        <div 
+          className="w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center text-white text-xs font-bold ml-1 cursor-default select-none"
+          title={`${user?.name || 'Admin'} (${user?.role || 'ADMIN'})`}
+        >
+          {getInitials()}
         </div>
       </div>
     </header>
@@ -71,8 +89,20 @@ function Layout() {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Layout />
-    </BrowserRouter>
+    <AuthProvider>
+      <ToastProvider>
+        <BrowserRouter>
+          <Routes>
+            {/* Public login page */}
+            <Route path="/login" element={<Login />} />
+            
+            {/* All other pages protected */}
+            <Route element={<ProtectedRoute />}>
+              <Route path="/*" element={<Layout />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </ToastProvider>
+    </AuthProvider>
   );
 }
