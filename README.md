@@ -1,6 +1,18 @@
 # Smart Retail Operations and Inventory Management System
 
-Enterprise-level Smart Retail Operations and Inventory Management System built with **Spring Boot 3**, **MongoDB**, **React.js**, **Nginx**, and **Docker**.
+An enterprise-grade, full-stack B2B SaaS platform designed to streamline retail operations, automate inventory tracking, manage supplier relations, and organize customer order lifecycles. Built with **Spring Boot 3**, **MongoDB**, **React.js (Vite)**, **Nginx**, and **Docker**.
+
+### 💼 Core Business Capabilities
+*   **Real-Time Inventory Management**: Track active stock volumes, monitor brand assets, and receive automated warnings when products fall below configured low-stock thresholds.
+*   **Supplier & Procurement Management**: Track vendor contact information, emails, and physical addresses. Prevent data fragmentation by enforcing referential checks.
+*   **Order Lifecycle Tracking**: Seamless checkout workflow that validates customer existence, verifies product availability, automatically updates item status to `OUT_OF_STOCK` on zero balance, and restores stock on cancelled or deleted orders.
+*   **Interactive Analytics Dashboard**: Consolidated summaries of total sales, product counts, and category valuations with responsive, lightweight SVG data charts.
+
+### 🛠️ Technical Highlights
+*   **Stateless JWT Security (`HS384`)**: Secure admin authentication via Spring Security with cryptographically signed tokens. Default admin credentials (`admin` / `admin123`) are seeded automatically on startup.
+*   **Service-Level Referential Integrity**: Restricts administrative deletion of Categories or Suppliers that have active products assigned to them, maintaining clean relational networks in a document database.
+*   **Global Error Handling**: Integrated `@RestControllerAdvice` wrapper mapping validation constraints, duplicate entries, bad credentials, and resource-not-found exceptions to standard JSON error payloads.
+*   **Production-Ready Containerization**: Docker Compose environment with Nginx reverse proxying to route client traffic and isolate MongoDB and backend services within a private network.
 
 ---
 
