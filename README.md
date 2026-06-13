@@ -10,7 +10,7 @@ Enterprise-level Smart Retail Operations and Inventory Management System built w
 graph TD
     Client["Browser (localhost:3000)"]
     
-    subgraph Docker Network ("smartretail-network")
+    subgraph Network ["Docker Network (smartretail-network)"]
         Frontend["smartretail-frontend (Nginx on Port 80)"]
         Backend["smartretail-backend (Spring Boot on Port 8080)"]
         Database["smartretail-mongodb (MongoDB on Port 27017)"]
