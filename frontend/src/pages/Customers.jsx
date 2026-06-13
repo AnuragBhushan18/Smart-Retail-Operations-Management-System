@@ -97,7 +97,7 @@ export default function Customers() {
   if (error) return <ErrorAlert message={error} onRetry={load} />;
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-5 animate-fade-in-up">
 
       <SectionHeader
         title="Customers"

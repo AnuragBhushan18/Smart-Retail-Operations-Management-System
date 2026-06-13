@@ -21,17 +21,17 @@
 
   /* ── Cards ─────────────────────────────────────────────────── */
   .card {
-    @apply bg-white border border-slate-200 rounded-2xl shadow-card;
+    @apply bg-white border border-slate-200 rounded-2xl shadow-card transition-all duration-300 ease-out;
   }
   .card-hover {
-    @apply card transition-all duration-200 hover:shadow-card-hover hover:border-slate-300;
+    @apply card hover:shadow-card-hover hover:border-slate-300 hover:-translate-y-1;
   }
 
   /* ── Buttons ────────────────────────────────────────────────── */
   .btn {
     @apply inline-flex items-center gap-2 font-medium rounded-xl transition-all duration-200
            focus:outline-none focus:ring-2 focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed
-           text-sm px-4 py-2.5;
+           text-sm px-4 py-2.5 active:scale-[0.97];
   }
   .btn-primary {
     @apply btn bg-blue-500 hover:bg-blue-600 text-white shadow-sm focus:ring-blue-300;
@@ -111,12 +111,21 @@
     @apply px-4 py-3.5 text-slate-700 border-b border-slate-100;
   }
   .table tbody tr:last-child td { @apply border-b-0; }
-  .table tbody tr { @apply hover:bg-slate-50 transition-colors duration-100; }
+  .table tbody tr {
+    @apply hover:bg-slate-50 transition-colors duration-100;
+    animation: fadeIn 0.2s ease-out;
+  }
 
   /* ── Navigation ─────────────────────────────────────────────── */
   .nav-link {
     @apply flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 font-medium text-sm
-           hover:text-slate-900 hover:bg-white hover:shadow-sm transition-all duration-200;
+           hover:text-slate-900 hover:bg-white hover:shadow-sm transition-all duration-200 active:scale-[0.98];
+  }
+  .nav-link svg {
+    @apply transition-transform duration-200;
+  }
+  .nav-link:hover svg {
+    @apply translate-x-0.5;
   }
   .nav-link.active {
     @apply text-blue-700 bg-white shadow-sm border border-blue-100;
@@ -174,4 +183,42 @@
   .skeleton {
     @apply bg-slate-200 rounded animate-pulse;
   }
+}
+
+/* ── Custom Keyframe Animations ───────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleUp {
+  from { transform: scale(0.96); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from { transform: translateY(12px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+/* ── Animation Classes ────────────────────────────────────────── */
+.animate-fade-in {
+  animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-scale-up {
+  animation: scaleUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }

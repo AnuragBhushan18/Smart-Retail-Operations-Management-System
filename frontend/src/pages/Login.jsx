@@ -75,7 +75,7 @@ export default function Login() {
         <div className="flex-1 flex items-center gap-8 z-10 my-8">
           
           {/* Feature Lists Column */}
-          <div className="w-[45%] xl:w-[48%] space-y-6">
+          <div className="w-[45%] xl:w-[48%] space-y-6 animate-fade-in-up">
             <div className="space-y-3">
               <h2 className="text-3xl xl:text-4xl font-extrabold text-white leading-[1.15] tracking-tight">
                 Smarter <span className="text-blue-400">Retail.</span><br />
@@ -191,7 +191,7 @@ export default function Login() {
           </div>
 
           {/* Tilted 3D Tablet Dashboard Mockup */}
-          <div className="w-[55%] xl:w-[52%] flex items-center justify-center">
+          <div className="w-[55%] xl:w-[52%] flex items-center justify-center animate-scale-up">
             <div 
               className="bg-[#0A101D] border border-white/10 rounded-2xl shadow-2xl flex text-white relative overflow-hidden"
               style={{
@@ -383,7 +383,7 @@ export default function Login() {
       <div className="w-full lg:w-[50%] xl:w-[45%] flex items-center justify-center p-6 sm:p-12 md:p-16 bg-[#FAFAFA]">
         
         {/* Symmetrical elevated card wrapper matching Zoho/Shopify */}
-        <div className="w-full max-w-[440px] bg-white border border-slate-200/60 rounded-[32px] shadow-[0_8px_30px_rgb(0,0,0,0.02)] p-10">
+        <div className="w-full max-w-[440px] bg-white border border-slate-200/60 rounded-[32px] shadow-[0_8px_30px_rgb(0,0,0,0.02)] p-10 animate-fade-in-up">
           
           {/* Brand header on mobile/tablet */}
           <div className="flex items-center gap-2.5 mb-8 lg:hidden">

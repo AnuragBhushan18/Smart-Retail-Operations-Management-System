@@ -138,7 +138,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="space-y-6 pb-8">
+    <div className="space-y-6 pb-8 animate-fade-in-up">
 
       {/* ── Page Header ──────────────────────────────────────────────── */}
       <div className="flex items-start justify-between">

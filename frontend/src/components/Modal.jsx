@@ -11,9 +11,9 @@ export default function Modal({ isOpen, onClose, title, children, footer, size =
   }[size] || 'max-w-lg';
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay animate-fade-in" onClick={onClose}>
       <div
-        className={`modal-box ${sizeClass} max-h-[92vh] flex flex-col w-full`}
+        className={`modal-box animate-scale-up ${sizeClass} max-h-[92vh] flex flex-col w-full`}
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
