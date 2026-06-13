@@ -153,11 +153,11 @@ export default function Dashboard() {
 
       {/* ── KPI Stats Row ─────────────────────────────────────────────── */}
       <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-        <StatCard icon={Package}      label="Total Products"   value={fmt(stats.totalProducts)}   iconBg="bg-blue-50"    iconColor="text-blue-500" />
-        <StatCard icon={Tag}          label="Categories"        value={fmt(stats.totalCategories)} iconBg="bg-purple-50"  iconColor="text-purple-500" />
-        <StatCard icon={Truck}        label="Suppliers"          value={fmt(stats.totalSuppliers)}  iconBg="bg-teal-50"    iconColor="text-teal-500" />
-        <StatCard icon={Users}        label="Customers"          value={fmt(stats.totalCustomers)}  iconBg="bg-emerald-50" iconColor="text-emerald-500" />
-        <StatCard icon={ShoppingCart} label="Total Orders"       value={fmt(stats.totalOrders)}     iconBg="bg-amber-50"   iconColor="text-amber-500" />
+        <StatCard icon={Package}      label="Total Products"   value={fmt(stats.totalProducts)}   iconBg="bg-blue-50"    iconColor="text-blue-500" to="/products" />
+        <StatCard icon={Tag}          label="Categories"        value={fmt(stats.totalCategories)} iconBg="bg-purple-50"  iconColor="text-purple-500" to="/categories" />
+        <StatCard icon={Truck}        label="Suppliers"          value={fmt(stats.totalSuppliers)}  iconBg="bg-teal-50"    iconColor="text-teal-500" to="/suppliers" />
+        <StatCard icon={Users}        label="Customers"          value={fmt(stats.totalCustomers)}  iconBg="bg-emerald-50" iconColor="text-emerald-500" to="/customers" />
+        <StatCard icon={ShoppingCart} label="Total Orders"       value={fmt(stats.totalOrders)}     iconBg="bg-amber-50"   iconColor="text-amber-500" to="/orders" />
       </div>
 
       {/* ── Inventory Value + Low Stock ───────────────────────────────── */}

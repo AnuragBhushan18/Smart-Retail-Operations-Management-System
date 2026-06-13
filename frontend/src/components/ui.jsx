@@ -1,4 +1,5 @@
 import { AlertTriangle, PackageOpen, RefreshCw, CheckCircle, Info } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 /* ── Spinner ──────────────────────────────────────────────────────────────── */
 export function Spinner({ size = 'md', color = 'blue' }) {
@@ -159,9 +160,9 @@ export function SectionHeader({ title, subtitle, action }) {
 }
 
 /* ── Stat Card ───────────────────────────────────────────────────────────── */
-export function StatCard({ icon: Icon, label, value, iconBg, iconColor, trend, suffix = '' }) {
-  return (
-    <div className="stat-card">
+export function StatCard({ icon: Icon, label, value, iconBg, iconColor, trend, suffix = '', to }) {
+  const CardContent = (
+    <>
       <div className={`stat-icon ${iconBg}`}>
         <Icon size={22} className={iconColor} />
       </div>
@@ -169,6 +170,20 @@ export function StatCard({ icon: Icon, label, value, iconBg, iconColor, trend, s
         <p className="text-2xl font-bold text-slate-800 tabular-nums">{value ?? '—'}{suffix}</p>
         <p className="text-sm text-slate-500 truncate">{label}</p>
       </div>
+    </>
+  );
+
+  if (to) {
+    return (
+      <Link to={to} className="stat-card select-none cursor-pointer hover:border-blue-300 active:scale-[0.98]">
+        {CardContent}
+      </Link>
+    );
+  }
+
+  return (
+    <div className="stat-card select-none">
+      {CardContent}
     </div>
   );
 }

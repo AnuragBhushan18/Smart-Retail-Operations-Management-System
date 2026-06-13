@@ -227,3 +227,14 @@
 .animate-slide-in-right {
   animation: slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
+@keyframes loadingProgress {
+  0% { transform: scaleX(0); }
+  30% { transform: scaleX(0.4); }
+  70% { transform: scaleX(0.8); }
+  100% { transform: scaleX(1); }
+}
+
+.animate-loading-progress {
+  animation: loadingProgress 1.4s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
