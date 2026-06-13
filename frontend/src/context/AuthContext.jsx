@@ -8,10 +8,10 @@ export function AuthProvider({ children }) {
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Initialize and check local storage on mount
+  // Initialize and check local storage or session storage on mount
   useEffect(() => {
-    const storedToken = localStorage.getItem('token');
-    const storedUser = localStorage.getItem('user');
+    const storedToken = localStorage.getItem('token') || sessionStorage.getItem('token');
+    const storedUser = localStorage.getItem('user') || sessionStorage.getItem('user');
 
     if (storedToken && storedUser) {
       setToken(storedToken);
@@ -21,7 +21,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   // Login action
-  const login = async (username, password) => {
+  const login = async (username, password, rememberMe = false) => {
     setLoading(true);
     try {
       const response = await axios.post('/api/auth/login', { username, password });
@@ -29,9 +29,17 @@ export function AuthProvider({ children }) {
 
       const userData = { username: userN, email, name, role };
       
-      // Save to local storage
-      localStorage.setItem('token', jwtToken);
-      localStorage.setItem('user', JSON.stringify(userData));
+      // Select storage based on Remember Me preference
+      const storage = rememberMe ? localStorage : sessionStorage;
+      const otherStorage = rememberMe ? sessionStorage : localStorage;
+      
+      // Clean up the other storage first to avoid mixed authentication states
+      otherStorage.removeItem('token');
+      otherStorage.removeItem('user');
+      
+      // Save to selected storage
+      storage.setItem('token', jwtToken);
+      storage.setItem('user', JSON.stringify(userData));
 
       // Update state
       setToken(jwtToken);
@@ -50,6 +58,8 @@ export function AuthProvider({ children }) {
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('user');
     setToken(null);
     setUser(null);
     window.location.href = '/login';
