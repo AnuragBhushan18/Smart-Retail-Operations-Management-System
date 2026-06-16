@@ -67,10 +67,12 @@ public class DataSeeder implements CommandLineRunner {
             log.info("Default admin user seeded successfully!");
         }
 
-        if (categoryRepository.count() > 0) {
-            log.info("Database already seeded. Skipping data seeder.");
-            return;
-        }
+        log.info("Clearing existing database tables for clean seed...");
+        orderRepository.deleteAll();
+        productRepository.deleteAll();
+        customerRepository.deleteAll();
+        categoryRepository.deleteAll();
+        supplierRepository.deleteAll();
 
         log.info("=== Starting Data Seeder ===");
 
@@ -95,8 +97,16 @@ public class DataSeeder implements CommandLineRunner {
         sports.setName("Sports & Fitness");
         sports.setDescription("Sports equipment, gym accessories and outdoor gear");
 
+        Category books = new Category();
+        books.setName("Books & Stationery");
+        books.setDescription("Novels, textbooks, office stationery and study materials");
+
+        Category footwear = new Category();
+        footwear.setName("Footwear & Shoes");
+        footwear.setDescription("Casual shoes, sports shoes, formal footwear, sandals");
+
         List<Category> savedCategories = categoryRepository.saveAll(
-                List.of(electronics, clothing, groceries, furniture, sports));
+                List.of(electronics, clothing, groceries, furniture, sports, books, footwear));
         log.info("Seeded {} categories", savedCategories.size());
 
         Category elec   = savedCategories.get(0);
@@ -104,6 +114,8 @@ public class DataSeeder implements CommandLineRunner {
         Category groc   = savedCategories.get(2);
         Category furn   = savedCategories.get(3);
         Category sport  = savedCategories.get(4);
+        Category book   = savedCategories.get(5);
+        Category foot   = savedCategories.get(6);
 
         // ── 2. Seed Suppliers ─────────────────────────────────────────────────
         Supplier techCorp = new Supplier();
@@ -130,14 +142,28 @@ public class DataSeeder implements CommandLineRunner {
         homeStyle.setEmail("wholesale@homestyleint.com");
         homeStyle.setAddress("22 Furniture Hub, Jodhpur, Rajasthan - 342001");
 
+        Supplier apexFootwear = new Supplier();
+        apexFootwear.setName("Apex Footwear Supply");
+        apexFootwear.setContactNumber("9555123456");
+        apexFootwear.setEmail("apex@footwear.com");
+        apexFootwear.setAddress("Sector 3, Noida, Uttar Pradesh - 201301");
+
+        Supplier globalBooks = new Supplier();
+        globalBooks.setName("Global Book Distributors");
+        globalBooks.setContactNumber("9444123456");
+        globalBooks.setEmail("orders@globalbooks.com");
+        globalBooks.setAddress("15 Daryaganj, New Delhi - 110002");
+
         List<Supplier> savedSuppliers = supplierRepository.saveAll(
-                List.of(techCorp, fashionHub, freshFarm, homeStyle));
+                List.of(techCorp, fashionHub, freshFarm, homeStyle, apexFootwear, globalBooks));
         log.info("Seeded {} suppliers", savedSuppliers.size());
 
         Supplier s1 = savedSuppliers.get(0); // TechCorp
         Supplier s2 = savedSuppliers.get(1); // FashionHub
         Supplier s3 = savedSuppliers.get(2); // FreshFarm
         Supplier s4 = savedSuppliers.get(3); // HomeStyle
+        Supplier s5 = savedSuppliers.get(4); // Apex Footwear
+        Supplier s6 = savedSuppliers.get(5); // Global Books
 
         // ── 3. Seed Products ──────────────────────────────────────────────────
         // Electronics
@@ -151,6 +177,8 @@ public class DataSeeder implements CommandLineRunner {
                 26990.0, 60, "Sony", elec.getId(), s1.getId(), "ACTIVE");
         Product p5 = makeProduct("iPad Air 11-inch", "M2 chip, 8GB RAM, 256GB, Wi-Fi + Cellular",
                 79900.0, 8, "Apple", elec.getId(), s1.getId(), "ACTIVE");
+        Product p16 = makeProduct("Sony PlayStation 5", "Next-gen console, Ultra-High Speed SSD, ray tracing",
+                54990.0, 25, "Sony", elec.getId(), s1.getId(), "ACTIVE");
 
         // Clothing
         Product p6 = makeProduct("Levi's 511 Slim Fit Jeans", "Slim fit, stretch denim, mid-rise, 5-pocket styling",
@@ -159,6 +187,8 @@ public class DataSeeder implements CommandLineRunner {
                 10995.0, 50, "Nike", cloth.getId(), s2.getId(), "ACTIVE");
         Product p8 = makeProduct("Allen Solly Formal Shirt", "100% cotton, slim fit, full sleeves, easy iron",
                 1299.0, 200, "Allen Solly", cloth.getId(), s2.getId(), "ACTIVE");
+        Product p17 = makeProduct("Adidas Classic Hoodie", "Unisex classic logo cotton blend hoodie",
+                4999.0, 75, "Adidas", cloth.getId(), s2.getId(), "ACTIVE");
 
         // Groceries
         Product p9 = makeProduct("Tata Tea Gold 500g", "Premium blend, rich aroma, 500g pack",
@@ -167,21 +197,39 @@ public class DataSeeder implements CommandLineRunner {
                 289.0, 300, "Amul", groc.getId(), s3.getId(), "ACTIVE");
         Product p11 = makeProduct("Fortune Basmati Rice 5kg", "Extra-long grain, aged basmati, premium quality",
                 549.0, 5, "Fortune", groc.getId(), s3.getId(), "ACTIVE");
+        Product p18 = makeProduct("Nescafé Classic Coffee 100g", "Pure soluble coffee, double filter technology",
+                340.0, 120, "Nestle", groc.getId(), s3.getId(), "ACTIVE");
 
         // Furniture
         Product p12 = makeProduct("Ergonomic Office Chair", "Lumbar support, height adjustable, breathable mesh back",
                 12999.0, 20, "DuraSeat", furn.getId(), s4.getId(), "ACTIVE");
         Product p13 = makeProduct("Wooden Study Desk", "Solid sheesham wood, 2 drawers, 120cm wide",
                 8499.0, 12, "WoodCraft", furn.getId(), s4.getId(), "ACTIVE");
+        Product p19 = makeProduct("Foldable Dining Table", "4-seater wooden dining table, space saving",
+                15499.0, 18, "HomeStyle", furn.getId(), s4.getId(), "ACTIVE");
 
         // Sports
         Product p14 = makeProduct("Yonex Badminton Racket", "Graphite frame, 3U weight, string tension 20-26 lbs",
                 2499.0, 0, "Yonex", sport.getId(), null, "OUT_OF_STOCK");
         Product p15 = makeProduct("Decathlon Yoga Mat", "6mm thick, anti-slip, eco-friendly TPE material",
                 999.0, 150, "Domyos", sport.getId(), null, "ACTIVE");
+        Product p20 = makeProduct("Nivia Storm Football", "Rubber outer shell, panel stitched, official size 5",
+                699.0, 85, "Nivia", sport.getId(), null, "ACTIVE");
+
+        // Books & Stationery (new)
+        Product p21 = makeProduct("Parker Vector Pen", "Standard rollerball pen, stainless steel trim, blue ink",
+                349.0, 250, "Parker", book.getId(), s6.getId(), "ACTIVE");
+        Product p22 = makeProduct("Hardcover Journal Notebook", "A5 size, 200 ruled pages, premium 100 GSM paper",
+                299.0, 180, "Classmate", book.getId(), s6.getId(), "ACTIVE");
+
+        // Footwear & Shoes (new)
+        Product p23 = makeProduct("Puma Runner Sports Shoes", "Lightweight running shoes, breathable mesh upper",
+                4499.0, 65, "Puma", foot.getId(), s5.getId(), "ACTIVE");
+        Product p24 = makeProduct("Bata Leather Formal Shoes", "Derby lace-up leather formal shoes for men",
+                2499.0, 40, "Bata", foot.getId(), s5.getId(), "ACTIVE");
 
         List<Product> savedProducts = productRepository.saveAll(
-                List.of(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15));
+                List.of(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22, p23, p24));
         log.info("Seeded {} products", savedProducts.size());
 
         // ── 4. Seed Customers ─────────────────────────────────────────────────
@@ -195,9 +243,13 @@ public class DataSeeder implements CommandLineRunner {
                 "23 Navrangpura", "Ahmedabad", "Gujarat", "380009", "India");
         Customer c5 = makeCustomer("Vikram Nair", "9988776655", "vikram.nair@email.com",
                 "88 MG Road", "Kochi", "Kerala", "682016", "India");
+        Customer c6 = makeCustomer("Deepak Verma", "9811223344", "deepak.verma@email.com",
+                "Flat 101, Sector 21", "Gurugram", "Haryana", "122001", "India");
+        Customer c7 = makeCustomer("Anjali Gupta", "9822334455", "anjali.gupta@gmail.com",
+                "56 Salt Lake", "Kolkata", "West Bengal", "700091", "India");
 
         List<Customer> savedCustomers = customerRepository.saveAll(
-                List.of(c1, c2, c3, c4, c5));
+                List.of(c1, c2, c3, c4, c5, c6, c7));
         log.info("Seeded {} customers", savedCustomers.size());
 
         // ── 5. Seed Orders ────────────────────────────────────────────────────

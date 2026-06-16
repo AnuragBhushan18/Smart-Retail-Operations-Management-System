@@ -6,8 +6,45 @@
 @layer base {
   *, *::before, *::after { box-sizing: border-box; }
 
+  :root {
+    --bg-card: #FFFFFF;
+    --bg-app: #FAF8F5;
+    --bg-hover: #F4EFE6;
+    --border-card: #EAE3D9;
+    --border-muted: #D8CFC2;
+    --slate-50: #FAF8F5;
+    --slate-100: #F4EFE6;
+    --slate-200: #EAE3D9;
+    --slate-300: #D8CFC2;
+    --slate-400: #BCAFA0;
+    --slate-500: #988A7A;
+    --slate-600: #7E7060;
+    --slate-700: #645749;
+    --slate-800: #3D352C;
+    --slate-900: #1E1A16;
+  }
+
+  .dark {
+    --bg-card: #0A1416;       /* Clean dark teal card background */
+    --bg-app: #04090A;        /* Deeper app background */
+    --bg-hover: #102126;      /* Slightly lighter hover states */
+    --border-card: #182C31;   /* Border color */
+    --border-muted: #243E44;  /* Muted borders */
+    
+    --slate-50: #04090A;
+    --slate-100: #102126;
+    --slate-200: #182C31;
+    --slate-300: #243E44;
+    --slate-400: #4B6E76;
+    --slate-500: #6B8B94;     /* Muted text */
+    --slate-600: #8BA8B0;
+    --slate-700: #ACC5CD;
+    --slate-800: #D0E1E6;     /* Body text */
+    --slate-900: #EEF5F7;     /* Title text */
+  }
+
   body {
-    @apply bg-slate-50 text-slate-800 font-sans antialiased;
+    @apply bg-slate-50 text-slate-800 font-sans antialiased transition-colors duration-200;
     margin: 0;
   }
 
@@ -21,10 +58,12 @@
 
   /* ── Cards ─────────────────────────────────────────────────── */
   .card {
-    @apply bg-white border border-slate-200 rounded-2xl shadow-card transition-all duration-300 ease-out;
+    @apply bg-white border border-slate-200 rounded-2xl shadow-card transition-all duration-300 ease-out
+           dark:bg-gradient-to-br dark:from-[#0A1416] dark:to-[#060D0E] dark:border-slate-200 dark:shadow-[0_4px_20px_-2px_rgba(0,0,0,0.4)];
   }
   .card-hover {
-    @apply card hover:shadow-card-hover hover:border-slate-300 hover:-translate-y-1.5;
+    @apply card hover:shadow-card-hover hover:border-slate-300 hover:-translate-y-1.5
+           dark:hover:border-blue-500/50 dark:hover:shadow-[0_8px_30px_-4px_rgba(42,111,130,0.15)];
   }
 
   /* ── Buttons ────────────────────────────────────────────────── */
@@ -37,7 +76,7 @@
     @apply btn bg-blue-500 hover:bg-blue-600 text-white shadow-sm focus:ring-blue-300;
   }
   .btn-secondary {
-    @apply btn bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 shadow-sm focus:ring-slate-200;
+    @apply btn bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 shadow-sm focus:ring-slate-200;
   }
   .btn-success {
     @apply btn bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 focus:ring-emerald-200;
@@ -58,7 +97,7 @@
   /* ── Form Inputs ────────────────────────────────────────────── */
   .input {
     @apply w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800
-           placeholder-slate-400 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100
+           placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20
            transition-all duration-200;
   }
   .input-sm {
@@ -78,13 +117,13 @@
   .badge {
     @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium;
   }
-  .badge-active    { @apply badge bg-emerald-50 text-emerald-700 border border-emerald-200; }
-  .badge-inactive  { @apply badge bg-slate-100  text-slate-500   border border-slate-200; }
-  .badge-warning   { @apply badge bg-amber-50   text-amber-700   border border-amber-200; }
-  .badge-danger    { @apply badge bg-red-50     text-red-600     border border-red-200; }
-  .badge-info      { @apply badge bg-blue-50    text-blue-700    border border-blue-200; }
-  .badge-purple    { @apply badge bg-purple-50  text-purple-700  border border-purple-200; }
-  .badge-teal      { @apply badge bg-teal-50    text-teal-700    border border-teal-200; }
+  .badge-active    { @apply badge bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20; }
+  .badge-inactive  { @apply badge bg-slate-100  text-slate-500   border border-slate-200   dark:bg-slate-100     dark:text-slate-400  dark:border-slate-200; }
+  .badge-warning   { @apply badge bg-amber-50   text-amber-700   border border-amber-200   dark:bg-amber-500/10   dark:text-amber-400   dark:border-amber-500/20; }
+  .badge-danger    { @apply badge bg-red-50     text-red-600     border border-red-200     dark:bg-red-500/10     dark:text-red-400     dark:border-red-500/20; }
+  .badge-info      { @apply badge bg-blue-50    text-blue-700    border border-blue-200    dark:bg-blue-500/10    dark:text-blue-400    dark:border-blue-500/20; }
+  .badge-purple    { @apply badge bg-purple-50  text-purple-700  border border-purple-200  dark:bg-purple-500/10  dark:text-purple-400  dark:border-purple-500/20; }
+  .badge-teal      { @apply badge bg-teal-50    text-teal-700    border border-teal-200    dark:bg-teal-500/10    dark:text-teal-400    dark:border-teal-500/20; }
 
   /* ── Page Layout ────────────────────────────────────────────── */
   .page-header {
@@ -102,7 +141,7 @@
     @apply overflow-x-auto rounded-xl border border-slate-200;
   }
   .table { @apply w-full text-sm border-collapse; }
-  .table thead { @apply bg-slate-50; }
+  .table thead { @apply bg-slate-100; }
   .table th {
     @apply text-slate-500 font-semibold text-left px-4 py-3 text-xs uppercase tracking-wider
            border-b border-slate-200;
@@ -112,7 +151,7 @@
   }
   .table tbody tr:last-child td { @apply border-b-0; }
   .table tbody tr {
-    @apply hover:bg-slate-50 transition-colors duration-150;
+    @apply hover:bg-slate-100 transition-colors duration-150;
     animation: tableRowFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
 
@@ -133,7 +172,11 @@
 
   /* ── Modals ─────────────────────────────────────────────────── */
   .modal-overlay {
-    @apply fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4;
+    @apply fixed inset-0 backdrop-blur-sm z-50 flex items-center justify-center p-4;
+    background-color: rgba(30, 26, 22, 0.4);
+  }
+  .dark .modal-overlay {
+    background-color: rgba(4, 9, 10, 0.45);
   }
   .modal-box {
     @apply bg-white border border-slate-200 rounded-2xl w-full max-w-lg shadow-dropdown;

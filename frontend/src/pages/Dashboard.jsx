@@ -115,7 +115,7 @@ export default function Dashboard() {
     return (
       <svg height={radius * 2} width={radius * 2} className="transform -rotate-90">
         <circle
-          stroke="#F1F5F9"
+          stroke="var(--slate-100)"
           fill="transparent"
           strokeWidth={stroke}
           r={normalizedRadius}
@@ -153,11 +153,11 @@ export default function Dashboard() {
 
       {/* ── KPI Stats Row ─────────────────────────────────────────────── */}
       <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-        <StatCard icon={Package}      label="Total Products"   value={fmt(stats.totalProducts)}   iconBg="bg-blue-50"    iconColor="text-blue-500" to="/products" />
-        <StatCard icon={Tag}          label="Categories"        value={fmt(stats.totalCategories)} iconBg="bg-purple-50"  iconColor="text-purple-500" to="/categories" />
-        <StatCard icon={Truck}        label="Suppliers"          value={fmt(stats.totalSuppliers)}  iconBg="bg-teal-50"    iconColor="text-teal-500" to="/suppliers" />
-        <StatCard icon={Users}        label="Customers"          value={fmt(stats.totalCustomers)}  iconBg="bg-emerald-50" iconColor="text-emerald-500" to="/customers" />
-        <StatCard icon={ShoppingCart} label="Total Orders"       value={fmt(stats.totalOrders)}     iconBg="bg-amber-50"   iconColor="text-amber-500" to="/orders" />
+        <StatCard icon={Package}      label="Total Products"   value={fmt(stats.totalProducts)}   iconBg="bg-blue-50 dark:bg-blue-500/10"    iconColor="text-blue-500 dark:text-blue-400" to="/products" />
+        <StatCard icon={Tag}          label="Categories"        value={fmt(stats.totalCategories)} iconBg="bg-purple-50 dark:bg-purple-500/10"  iconColor="text-purple-500 dark:text-purple-400" to="/categories" />
+        <StatCard icon={Truck}        label="Suppliers"          value={fmt(stats.totalSuppliers)}  iconBg="bg-teal-50 dark:bg-teal-500/10"    iconColor="text-teal-500 dark:text-teal-400" to="/suppliers" />
+        <StatCard icon={Users}        label="Customers"          value={fmt(stats.totalCustomers)}  iconBg="bg-emerald-50 dark:bg-emerald-500/10" iconColor="text-emerald-500 dark:text-emerald-400" to="/customers" />
+        <StatCard icon={ShoppingCart} label="Total Orders"       value={fmt(stats.totalOrders)}     iconBg="bg-amber-50 dark:bg-amber-500/10"   iconColor="text-amber-500 dark:text-amber-400" to="/orders" />
       </div>
 
       {/* ── Inventory Value + Low Stock ───────────────────────────────── */}
@@ -165,8 +165,8 @@ export default function Dashboard() {
         {/* Inventory Value */}
         <div className="card p-5">
           <div className="flex items-center gap-4">
-            <div className="stat-icon bg-emerald-50">
-              <DollarSign size={22} className="text-emerald-600" />
+            <div className="stat-icon bg-emerald-50 dark:bg-emerald-500/10">
+              <DollarSign size={22} className="text-emerald-600 dark:text-emerald-400" />
             </div>
             <div>
               <p className="text-slate-500 text-sm font-medium">Total Inventory Value</p>
@@ -182,14 +182,14 @@ export default function Dashboard() {
         </div>
 
         {/* Low Stock Alert */}
-        <div className={`card p-5 ${stats.lowStockCount > 0 ? 'border-amber-200 bg-amber-50/30' : ''}`}>
+        <div className={`card p-5 ${stats.lowStockCount > 0 ? 'border-amber-200 dark:border-amber-500/30 bg-amber-50/30 dark:bg-amber-500/5' : ''}`}>
           <div className="flex items-center gap-4">
-            <div className={`stat-icon ${stats.lowStockCount > 0 ? 'bg-amber-100' : 'bg-slate-100'}`}>
-              <AlertTriangle size={22} className={stats.lowStockCount > 0 ? 'text-amber-600' : 'text-slate-400'} />
+            <div className={`stat-icon ${stats.lowStockCount > 0 ? 'bg-amber-100 dark:bg-amber-500/15' : 'bg-slate-100 dark:bg-slate-800'}`}>
+              <AlertTriangle size={22} className={stats.lowStockCount > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-slate-400 dark:text-slate-500'} />
             </div>
             <div>
               <p className="text-slate-500 text-sm font-medium">Low Stock Alerts</p>
-              <p className={`text-3xl font-bold mt-0.5 tabular-nums ${stats.lowStockCount > 0 ? 'text-amber-600' : 'text-slate-800'}`}>
+              <p className={`text-3xl font-bold mt-0.5 tabular-nums ${stats.lowStockCount > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-slate-800'}`}>
                 {stats.lowStockCount}
                 <span className="text-base font-normal text-slate-500 ml-1">
                   product{stats.lowStockCount !== 1 ? 's' : ''}
@@ -213,10 +213,10 @@ export default function Dashboard() {
           <span className="badge-info">{fmt(stats.totalOrders)} total</span>
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          <OrderStatusCard label="Pending"   value={stats.pendingOrders}   icon={Clock}       bg="bg-amber-50"   color="text-amber-600"   border="border-amber-400"   percent={getPct(stats.pendingOrders)} />
-          <OrderStatusCard label="Confirmed" value={stats.confirmedOrders} icon={TrendingUp}  bg="bg-blue-50"    color="text-blue-600"    border="border-blue-400"    percent={getPct(stats.confirmedOrders)} />
-          <OrderStatusCard label="Shipped"   value={stats.shippedOrders}   icon={Send}        bg="bg-purple-50"  color="text-purple-600"  border="border-purple-400"  percent={getPct(stats.shippedOrders)} />
-          <OrderStatusCard label="Delivered" value={stats.deliveredOrders} icon={CheckCircle} bg="bg-emerald-50" color="text-emerald-600" border="border-emerald-400" percent={getPct(stats.deliveredOrders)} />
+          <OrderStatusCard label="Pending"   value={stats.pendingOrders}   icon={Clock}       bg="bg-amber-50 dark:bg-amber-500/10"   color="text-amber-600 dark:text-amber-400"   border="border-amber-400 dark:border-amber-500/40"   percent={getPct(stats.pendingOrders)} />
+          <OrderStatusCard label="Confirmed" value={stats.confirmedOrders} icon={TrendingUp}  bg="bg-blue-50 dark:bg-blue-500/10"    color="text-blue-600 dark:text-blue-400"    border="border-blue-400 dark:border-blue-500/40"    percent={getPct(stats.confirmedOrders)} />
+          <OrderStatusCard label="Shipped"   value={stats.shippedOrders}   icon={Send}        bg="bg-purple-50 dark:bg-purple-500/10"  color="text-purple-600 dark:text-purple-400"  border="border-purple-400 dark:border-purple-500/40"  percent={getPct(stats.shippedOrders)} />
+          <OrderStatusCard label="Delivered" value={stats.deliveredOrders} icon={CheckCircle} bg="bg-emerald-50 dark:bg-emerald-500/10" color="text-emerald-600 dark:text-emerald-400" border="border-emerald-400 dark:border-emerald-500/40" percent={getPct(stats.deliveredOrders)} />
         </div>
       </div>
 

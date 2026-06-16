@@ -1,11 +1,15 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: 'class',
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
+      backgroundColor: {
+        white: 'var(--bg-card, #ffffff)',
+      },
       colors: {
         // Remap default blue palette to premium Oceanic Teal for seamless page-wide styling
         blue: {
@@ -24,19 +28,24 @@ export default {
         secondary: { DEFAULT: '#3F9F83', 50:'#EBF6F3', 100:'#D4ECE5', 500:'#3F9F83', 600:'#2E7D66' },
         accent:    { DEFAULT: '#E28766', 50:'#FDF3F0', 100:'#FBE4DC', 500:'#D4704E', 600:'#AA5334' },
         brand:     { light:'#EAF2F4', mid:'#C8DBE0', DEFAULT:'#2A6F82', dark:'#1E5361' },
-        // Remap surface and slate to warm Sand tones
-        surface:   { DEFAULT:'#FAF8F5', card:'#FFFFFF', border:'#EAE3D9', hover:'#F3EFE9' },
+        // Remap surface and slate to warm Sand tones dynamically
+        surface: {
+          DEFAULT: 'var(--bg-app, #FAF8F5)',
+          card: 'var(--bg-card, #FFFFFF)',
+          border: 'var(--border-card, #EAE3D9)',
+          hover: 'var(--bg-hover, #F3EFE9)',
+        },
         slate: {
-          50:  '#FAF8F5', // App background (warm sand off-white)
-          100: '#F4EFE6', // Hover / Secondary background
-          200: '#EAE3D9', // Card / Table borders (warm clay border)
-          300: '#D8CFC2',
-          400: '#BCAFA0',
-          500: '#988A7A', // Muted text
-          600: '#7E7060',
-          700: '#645749',
-          800: '#3D352C', // Standard text
-          900: '#1E1A16', // Deep title text
+          50:  'var(--slate-50, #FAF8F5)', // App background (warm sand off-white)
+          100: 'var(--slate-100, #F4EFE6)', // Hover / Secondary background
+          200: 'var(--slate-200, #EAE3D9)', // Card / Table borders (warm clay border)
+          300: 'var(--slate-300, #D8CFC2)',
+          400: 'var(--slate-400, #BCAFA0)',
+          500: 'var(--slate-500, #988A7A)', // Muted text
+          600: 'var(--slate-600, #7E7060)',
+          700: 'var(--slate-700, #645749)',
+          800: 'var(--slate-800, #3D352C)', // Standard text
+          900: 'var(--slate-900, #1E1A16)', // Deep title text
         },
       },
       fontFamily: {

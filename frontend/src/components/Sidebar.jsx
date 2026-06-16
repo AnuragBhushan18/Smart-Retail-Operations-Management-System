@@ -31,25 +31,25 @@ export default function Sidebar() {
       className={`
         ${collapsed ? 'w-[68px]' : 'w-[230px]'}
         flex-shrink-0 flex flex-col min-h-screen
-        bg-[#EAF2F4] border-r border-[#D2E2E6]
+        bg-[#EAF2F4] dark:bg-[#070E10] border-r border-[#D2E2E6] dark:border-[#13282C]
         transition-all duration-300 ease-in-out
         relative z-20
       `}
     >
       {/* ── Brand ───────────────────────────────────────────────── */}
-      <div className={`flex items-center gap-4 px-6 py-6 border-b border-[#D2E2E6] ${collapsed ? 'justify-center' : ''}`}>
+      <div className={`flex items-center gap-4 px-6 py-6 border-b border-[#D2E2E6] dark:border-[#13282C] ${collapsed ? 'justify-center' : ''}`}>
         <div className="w-10 h-10 bg-gradient-to-tr from-[#1E5361] to-[#2A6F82] rounded-[14px] flex items-center justify-center flex-shrink-0 shadow-md shadow-[#2A6F82]/20 border border-[#235C6C]/20">
           <Store size={19} className="text-white animate-pulse" />
         </div>
         {!collapsed && (
           <div className="min-w-0 animate-fade-in">
-            <p className="text-[#0F2E35] font-black text-[16px] leading-none tracking-tight">SmartRetail</p>
+            <p className="text-[#0F2E35] dark:text-[#EAF2F4] font-black text-[16px] leading-none tracking-tight">SmartRetail</p>
             <div className="flex items-center gap-1.5 mt-2">
               <span className="relative flex h-1.5 w-1.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
               </span>
-              <p className="text-[#2A6F82] text-[9.5px] font-extrabold uppercase tracking-[0.1em] leading-none">
+              <p className="text-[#2A6F82] dark:text-[#5D9CB0] text-[9.5px] font-extrabold uppercase tracking-[0.1em] leading-none">
                 Admin Portal
               </p>
             </div>
@@ -60,7 +60,7 @@ export default function Sidebar() {
       {/* ── Navigation ──────────────────────────────────────────── */}
       <nav className={`flex-1 py-6 ${collapsed ? 'px-2' : 'px-3'} space-y-2`}>
         {!collapsed && (
-          <p className="text-[11.5px] font-extrabold text-[#4A6D76] uppercase tracking-[0.18em] px-3 mb-4 animate-fade-in">
+          <p className="text-[11.5px] font-extrabold text-[#4A6D76] dark:text-[#5D7A82] uppercase tracking-[0.18em] px-3 mb-4 animate-fade-in">
             Main Menu
           </p>
         )}
@@ -74,7 +74,7 @@ export default function Sidebar() {
               `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 active:scale-[0.98] relative ${
                 isActive 
                   ? 'text-white bg-gradient-to-tr from-[#1E5361] to-[#2A6F82] border border-[#235C6C]/45 shadow-lg shadow-[#2A6F82]/20' 
-                  : 'text-[#5B7B83] hover:text-[#1C3A42] hover:bg-[#DCEAEF]/60'
+                  : 'text-[#5B7B83] dark:text-[#7FA0A8] hover:text-[#1C3A42] dark:hover:text-white hover:bg-[#DCEAEF]/60 dark:hover:bg-[#1E5361]/35'
               } ${collapsed ? 'justify-center px-0' : ''}`
             }
           >
@@ -97,7 +97,7 @@ export default function Sidebar() {
           title={collapsed ? 'Sign Out' : undefined}
           className={`
             w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold 
-            text-[#5B7B83] hover:text-rose-600 hover:bg-rose-50/50 transition-all duration-300 active:scale-[0.98]
+            text-[#5B7B83] dark:text-[#7FA0A8] hover:text-rose-600 dark:hover:text-rose-450 hover:bg-rose-50/50 dark:hover:bg-rose-950/20 transition-all duration-300 active:scale-[0.98]
             ${collapsed ? 'justify-center px-0' : ''}
           `}
         >
@@ -108,14 +108,14 @@ export default function Sidebar() {
 
       {/* ── Footer ──────────────────────────────────────────────── */}
       {!collapsed && (
-        <div className="px-4 py-4 border-t border-[#D2E2E6] animate-fade-in">
-          <div className="flex items-center gap-3 p-3 bg-[#DCEAEF]/40 rounded-xl border border-[#D2E2E6]/60 shadow-sm">
-            <div className="w-8 h-8 rounded-lg bg-[#C8DBE0] flex items-center justify-center flex-shrink-0">
-              <BarChart3 size={14} className="text-[#1C3A42]" />
+        <div className="px-4 py-4 border-t border-[#D2E2E6] dark:border-[#13282C] animate-fade-in">
+          <div className="flex items-center gap-3 p-3 bg-[#DCEAEF]/40 dark:bg-[#102B33]/20 rounded-xl border border-[#D2E2E6]/60 dark:border-[#13282C]/60 shadow-sm">
+            <div className="w-8 h-8 rounded-lg bg-[#C8DBE0] dark:bg-[#1A373F] flex items-center justify-center flex-shrink-0">
+              <BarChart3 size={14} className="text-[#1C3A42] dark:text-[#EAF2F4]" />
             </div>
             <div className="min-w-0">
-              <p className="text-xs font-semibold text-[#1C3A42] truncate">Smart Retail</p>
-              <p className="text-[10px] text-[#5B7B83]">v1.0.0 — Active</p>
+              <p className="text-xs font-semibold text-[#1C3A42] dark:text-[#EAF2F4] truncate">Smart Retail</p>
+              <p className="text-[10px] text-[#5B7B83] dark:text-[#7FA0A8]">v1.0.0 — Active</p>
             </div>
           </div>
         </div>
@@ -126,9 +126,9 @@ export default function Sidebar() {
         onClick={() => setCollapsed(!collapsed)}
         className="
           absolute -right-3 top-[72px]
-          w-6 h-6 rounded-full bg-[#EAF2F4] border border-[#D2E2E6] shadow-sm
+          w-6 h-6 rounded-full bg-[#EAF2F4] dark:bg-[#070E10] border border-[#D2E2E6] dark:border-[#13282C] shadow-sm
           flex items-center justify-center
-          text-[#5B7B83] hover:text-[#1C3A42] hover:border-[#2A6F82]
+          text-[#5B7B83] dark:text-[#7FA0A8] hover:text-[#1C3A42] dark:hover:text-white hover:border-[#2A6F82]
           transition-all duration-300 z-10 active:scale-95
         "
         title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
