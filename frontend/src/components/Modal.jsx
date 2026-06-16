@@ -1,4 +1,5 @@
 import { X } from 'lucide-react';
+import { createPortal } from 'react-dom';
 
 export default function Modal({ isOpen, onClose, title, children, footer, size = 'md' }) {
   if (!isOpen) return null;
@@ -10,7 +11,7 @@ export default function Modal({ isOpen, onClose, title, children, footer, size =
     xl: 'max-w-3xl',
   }[size] || 'max-w-lg';
 
-  return (
+  return createPortal(
     <div className="modal-overlay animate-fade-in" onClick={onClose}>
       <div
         className={`modal-box animate-scale-up ${sizeClass} max-h-[92vh] flex flex-col w-full`}
@@ -41,6 +42,7 @@ export default function Modal({ isOpen, onClose, title, children, footer, size =
           </div>
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

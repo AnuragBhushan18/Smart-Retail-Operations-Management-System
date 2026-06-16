@@ -1,5 +1,6 @@
 import { AlertTriangle, PackageOpen, RefreshCw, CheckCircle, Info } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { createPortal } from 'react-dom';
 
 /* ── Spinner ──────────────────────────────────────────────────────────────── */
 export function Spinner({ size = 'md', color = 'blue' }) {
@@ -96,7 +97,7 @@ export function InfoAlert({ message }) {
 /* ── Confirm Dialog ─────────────────────────────────────────────────────── */
 export function ConfirmDialog({ isOpen, onConfirm, onCancel, title, message, confirmLabel = 'Delete', confirmClass = 'bg-red-600 hover:bg-red-700 text-white' }) {
   if (!isOpen) return null;
-  return (
+  return createPortal(
     <div className="modal-overlay">
       <div className="modal-box max-w-sm">
         <div className="modal-header">
@@ -115,7 +116,8 @@ export function ConfirmDialog({ isOpen, onConfirm, onCancel, title, message, con
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 

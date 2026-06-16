@@ -211,6 +211,68 @@ The preconfigured Postman collection is located at the root of the project:
 
 ---
 
+## 🖼️ Application Screenshots
+
+### 🔑 1. Authentication & Security
+The system features a stateful login portal with JWT credential validation, session remember-me support, and secure route protection.
+
+![Login Page](./screenshots/login_page.png)
+*Figure 1: SmartRetail Admin Portal Login Interface.*
+
+---
+
+### 📊 2. System Dashboards & Theme Options
+The dashboard provides real-time business telemetry, key performance indicators (KPIs), dynamic charts, and an interactive diagnostics drawer.
+
+| Light Sand Theme (App Default) | Dark Oceanic Teal Theme |
+| :---: | :---: |
+| ![Light Dashboard](./screenshots/dashboard_light.png) | ![Dark Dashboard](./screenshots/dashboard_dark.png) |
+| *Figure 2: Light Mode Admin Operations Hub.* | *Figure 3: System-wide Dark Mode Toggle.* |
+
+---
+
+### 📦 3. Product Catalog & CRUD Workflows
+Manage inventory products, check stock levels, and customize properties via overlay modal dialogues.
+
+* **Product Catalog Table**: Features instant name search, category filter, and status badges.
+  ![Product Catalog](./screenshots/product_catalog.png)
+  *Figure 4: Product Inventory Management Catalog.*
+
+* **Creation & Edit Dialogues**: Perform safe catalog additions and inline properties modifications.
+  | Add New Product Modal | Edit Product Modal |
+  | :---: | :---: |
+  | ![Add Product](./screenshots/product_create.png) | ![Edit Product](./screenshots/product_edit.png) |
+  | *Figure 5: Create Product Overlay Form.* | *Figure 6: Edit Product Properties.* |
+
+* **Referential Deletion Safeguards**: Displays deletion warning and prevents database integrity breaks.
+  ![Delete Confirmation](./screenshots/product_delete.png)
+  *Figure 7: Product Deletion Confirmation Dialog.*
+
+---
+
+### 📡 4. Swagger API Documentation & Docker Infrastructure
+* **Docker Containerization Stack**: Confirms that backend, frontend client, and MongoDB database services are running healthy inside the containerized private network.
+  ![Docker Containers](./screenshots/docker_status.png)
+  *Figure 8: Docker Compose Services Status (Up & Healthy).*
+
+* **OpenAPI Documentation**: Swagger UI page listing all controllers and schema definitions.
+  ![Swagger UI](./screenshots/swagger_api.png)
+  *Figure 9: Swagger OpenAPI Backend Docs.*
+
+---
+
+### 🚀 5. Postman API REST Verification
+Successful verification of API routes reflecting complete database CRUD capabilities:
+
+| Operation | Route | Postman Request & Response |
+| :--- | :--- | :---: |
+| **CREATE** | `POST /api/products` | ![Postman Create](./screenshots/postman_create.png) <br> *Figure 10: Successful product registration response.* |
+| **READ** | `GET /api/dashboard/stats` | ![Postman Read](./screenshots/postman_read.png) <br> *Figure 11: Retrieving dashboard telemetry metrics.* |
+| **UPDATE** | `PUT /api/orders/{id}/status` | ![Postman Update](./screenshots/postman_update.png) <br> *Figure 12: Transitioning order lifecycle status.* |
+| **DELETE** | `DELETE /api/products/{id}` | ![Postman Delete](./screenshots/postman_delete.png) <br> *Figure 13: Catalog item record deletion.* |
+
+---
+
 ## ⚙️ Environment Variables & Custom Properties
 
 You can customize the deployment by setting the following environment variables:
@@ -222,4 +284,22 @@ You can customize the deployment by setting the following environment variables:
 | `APP_JWT_EXPIRATION` | `app.jwt.expiration` | `86400000` (24 hours) | Token expiration duration in ms |
 | `APP_INVENTORY_LOW_STOCK_THRESHOLD` | `app.inventory.low-stock-threshold` | `10` | Product stock level that triggers warnings |
 | `SERVER_PORT` | `server.port` | `8080` | Port the backend application binds to |
+
+### 🔑 Local Environment Setup (`.env`)
+
+For custom deployments or local runs, you can parameterize the system settings using environment variables:
+
+1. **Create the Environment File**:
+   Copy the provided `.env.example` template to a new `.env` file in the project root:
+   ```bash
+   cp .env.example .env
+   ```
+   *(Or in the backend folder for standalone backend execution: `cp backend/.env.example backend/.env`)*
+
+2. **Configure Settings**:
+   Open the newly created `.env` file and customize the variables. For example, replace the placeholder `APP_JWT_SECRET` with a custom secure key (minimum 256-bit hash) and input your database credentials if utilizing an external MongoDB cluster.
+
+3. **Secure Files**:
+   The `.env` file is excluded in `.gitignore` to prevent any credentials or secrets from being committed to version-control or shared archives.
+
 
