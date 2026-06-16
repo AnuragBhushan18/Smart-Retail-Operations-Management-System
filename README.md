@@ -137,7 +137,13 @@ SmartRetailSystem/
 ## 🚀 Quick Start Instructions
 
 ### Prerequisites
-- Docker & Docker Compose installed.
+- **For Option A (Docker - Recommended)**:
+  - [Docker Desktop](https://www.docker.com/products/docker-desktop/) or Docker Engine with Docker Compose installed.
+- **For Option B (Manual Local Setup)**:
+  - [Java Development Kit (JDK 21)](https://adoptium.net/temurin/releases/?version=21) installed.
+  - [Node.js (v18 or v20+)](https://nodejs.org/) installed.
+  - [MongoDB Community Server](https://www.mongodb.com/try/download/community) installed and running locally on port `27017`.
+  - [Apache Maven](https://maven.apache.org/) (optional, if running backend without the included Maven wrapper `mvnw`).
 
 ### Option A: Run Stack via Docker Compose (Recommended)
 To start the entire application stack (database, backend, frontend) with a single command:
